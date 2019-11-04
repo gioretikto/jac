@@ -25,25 +25,25 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>The syntax for other mathematical operators is the following</p>
 
-	- acos(x) Returns the angle (0 to π radians) whose cosine is x</p></li>
+	- acos(x) Returns the angle (0 to π radians) whose cosine is x
 
-	- asin(x) Returns the angle (—π/2 to π/2 radians) whose sine is x</p></li>
+	- asin(x) Returns the angle (—π/2 to π/2 radians) whose sine is x
 
-	- atan(x) Returns the angle (−π/2 to π/2 radians) whose tangent is x</p></li>
+	- atan(x) Returns the angle (−π/2 to π/2 radians) whose tangent is x
 
-	- cos(x) Returns the cosine of x (x in radians)</p></li>
+	- cos(x) Returns the cosine of x (x in radians)
 
-	- sin(x) Returns the sine of x (x in radians)</p></li>
+	- sin(x) Returns the sine of x (x in radians)
 
-	- tan(x) Returns the tangent of x (x in radians)</p></li>
+	- tan(x) Returns the tangent of x (x in radians)
 
-	- exp(x) Returns the exponential function of x (e<sup>x</sup>)</p></li>
+	- exp(x) Returns the exponential function of x (e<sup>x</sup>)
 
-	- ln(x) Returns the natural logarithm of x</p></li>
+	- ln(x) Returns the natural logarithm of x
 
-	- log(x) Returns the base 10 logarithm of x</p></li>
+	- log(x) Returns the base 10 logarithm of x
 
-	- sqrt(x) Returns the square root of x</p></li>
+	- sqrt(x) Returns the square root of x
 
 <h3>Contacts</h3>
 
