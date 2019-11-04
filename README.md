@@ -10,16 +10,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.</p>
 
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+<p>You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <h2>USAGE</h2>
 
 <p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one) able to perform calculation such as:</p>
 
-<pre>
-tan(50+1)*3
-</pre>
+<pre>tan(50+1)*3</pre>
 
 <p>or</p>
 
