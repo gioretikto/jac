@@ -23,7 +23,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <pre>4+4.5-(34/(8*3-3))</pre>
 
-<p>The syntax for other mathematical operator is the following</p>
+<p>The syntax for other mathematical operators is the following</p>
 
 <ul>
 	<li><p>acos(x) Returns the angle (0 to π radians) whose cosine is x</p></li>
