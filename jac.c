@@ -46,16 +46,23 @@ int main()
         
 		remove_spaces(buf);		
 		
-		while (*buf && *buf != '\n' && len < MAX) {
+		while ( *buf && *buf != '\n' && len < MAX ) {
 		
-			if (isdigit(*buf) || ( ( *buf == '+' || *buf == '-') && len == 0) ) {
+			if ( isdigit(*buf) || ( ( *buf == '+' || *buf == '-') && len == 0) ) {
+				sscanf(buf, "%lf%n", &num, &n);
+				add_item(&head, num, '?');
+				buf += n;
+				len += n;
+			}
+			
+			if ( buf[-1] == '(' && (*buf == '+' || *buf == '-') ) {
 				sscanf(buf, "%lf%n", &num, &n);
 				add_item(&head, num, '?');
 				buf += n;
 				len += n;
 			}
 		    			
-			else if (*buf == '/' || *buf == '*' || *buf == '+' || *buf == '-') {
+			else if ( *buf == '/' || *buf == '*' || *buf == '+' || *buf == '-' ) {
 			
 				operation[*buf - 42] = 1;
 				
@@ -71,7 +78,7 @@ int main()
 				buf++;
 			}
 			
-			else if (*buf == '^') {
+			else if ( *buf == '^') {
 				buf++;
 				sscanf(buf, "%lf%n", &num, &n);
 				head->value = pow(head->value, num);
@@ -79,17 +86,18 @@ int main()
 				len += n;
 			}
 			
-		    else if (*buf == '(' ) {
+		    else if ( *buf == '(' ) {
+		    
 				if(head != NULL && head->op == '?') {
 					head->op = '*';
 					operation[0] = 1;
 				}
 				end = head;
 				buf++;
-				len++;
+				len++;		
 			}
 			
-			else if (*buf == ')' ) {
+			else if ( *buf == ')' ) {
 				calculate(head, end, operation);
 				end = NULL;
 				buf++;

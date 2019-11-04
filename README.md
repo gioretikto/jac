@@ -1,26 +1,29 @@
 <h1>JAC 0.1 - Just Another Calculator</h1>
-Written by Giovanni Resta
 
-This program is free software: you can redistribute it and/or modify
+<p>This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+(at your option) any later version.</p>
 
-This program is distributed in the hope that it will be useful,
+<p>This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+GNU General Public License for more details.</p>
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 <h2>USAGE</h2>
 
-This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one) able to perform calculation such as:
+<p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one) able to perform calculation such as:</p>
 
 <pre>
 tan(50+1)*3
 </pre>
+
+<p>or</p>
+
+<pre>4+4.5-(34/(8*3-3))</pre>
 
 <p>The syntax for other mathematical operator is the following</p>
 
@@ -49,4 +52,4 @@ tan(50+1)*3
 
 <h3>Contacts</h3>
 
-You can reach me on the freenode IRC channel #cansi
+<p>You can reach me on the freenode IRC channel #cansi</p>
