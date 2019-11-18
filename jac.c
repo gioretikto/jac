@@ -22,6 +22,7 @@ void add (struct n *head, struct n *end);
 void calculate (struct n *head, struct n *end, _Bool *operation);
 void del_next(struct n *head);
 void unary (struct n *head, struct n *end);
+unsigned long factorial(unsigned long f);
 
 int main()
 {
@@ -53,6 +54,14 @@ int main()
 				add_item(&head, num, '?');
 				buf += n;
 				len += n;
+				
+							
+			if ( *buf == '!') { /* Factorial */
+				buf++;
+				head->value = factorial(head->value);
+				len++;
+			}
+			
 			}
 			
 			if ( buf[-1] == '(' && (*buf == '+' || *buf == '-') ) {
@@ -355,4 +364,11 @@ void del_next (struct n *before_del_next)
     temp = before_del_next->next;
     before_del_next->next = temp->next;
     free(temp);
+}
+
+unsigned long factorial(unsigned long f)
+{
+    if ( f == 0 ) 
+        return 1;
+    return(f * factorial(f - 1));
 }
