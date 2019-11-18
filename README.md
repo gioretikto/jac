@@ -44,6 +44,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 	- log(x) Returns the base 10 logarithm of x
 
 	- sqrt(x) Returns the square root of x
+	
+	- n! Returns factorial of n
 
 <h3>Contacts</h3>
 
