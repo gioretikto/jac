@@ -32,6 +32,7 @@ int main()
 	char *buf = line;
 	int n;
 	double num;
+	double tmp;
 
 	_Bool success = 1;
 	_Bool operation[6] = {0};
@@ -47,20 +48,19 @@ int main()
         
 		remove_spaces(buf);		
 		
-		while ( *buf && *buf != '\n' && len < MAX ) {
+		while (*buf && *buf != '\n' && len < MAX) {
 		
-			if ( isdigit(*buf) || ( ( *buf == '+' || *buf == '-') && len == 0) ) {
+			if ( isdigit(*buf) || ( (*buf == '+' || *buf == '-') && len == 0) ) {
 				sscanf(buf, "%lf%n", &num, &n);
 				add_item(&head, num, '?');
 				buf += n;
-				len += n;
-				
+				len += n;				
 							
-			if ( *buf == '!') { /* Factorial */
-				buf++;
-				head->value = factorial(head->value);
-				len++;
-			}
+				if ( *buf == '!') { /* Factorial */
+					buf++;
+					head->value = factorial(head->value);
+					len++;
+				}
 			
 			}
 			
@@ -71,7 +71,7 @@ int main()
 				len += n;
 			}
 		    			
-			else if ( *buf == '/' || *buf == '*' || *buf == '+' || *buf == '-' ) {
+			else if (*buf == '/' || *buf == '*' || *buf == '+' || *buf == '-') {
 			
 				operation[*buf - 42] = 1;
 				
@@ -87,15 +87,26 @@ int main()
 				buf++;
 			}
 			
-			else if ( *buf == '^') {
+			else if (*buf == '^') {
 				buf++;
+				len++;
 				sscanf(buf, "%lf%n", &num, &n);
+				buf +=n;
+				len +=n;
+				
+				if(*buf=='/'){
+					buf++;
+					len++;
+					sscanf(buf, "%lf%n", &tmp, &n);
+					buf += n;
+					len += n;
+					num = num/tmp;
+					printf("result: %lf\n", num);
+				}
 				head->value = pow(head->value, num);
-				buf += n;
-				len += n;
 			}
 			
-		    else if ( *buf == '(' ) {
+		    else if (*buf == '(') {
 		    
 				if(head != NULL && head->op == '?') {
 					head->op = '*';
@@ -106,7 +117,7 @@ int main()
 				len++;		
 			}
 			
-			else if ( *buf == ')' ) {
+			else if (*buf == ')') {
 				calculate(head, end, operation);
 				end = NULL;
 				buf++;
@@ -136,7 +147,7 @@ int main()
 		    
 		    else
 		    	buf++;
-		} /* while (*buf && *buf != '\n' && len < MAX) */
+		} /* end of while (*buf && *buf != '\n' && len < MAX) */
 		    
 		if(len == MAX) {
 			printf("The limit size of the expression was reached\n");

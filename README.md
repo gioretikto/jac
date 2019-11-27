@@ -1,4 +1,4 @@
-<h1>JAC 0.2 - Just Another Calculator</h1>
+<h1>JAC 0.3 - Just Another Calculator</h1>
 
 <p>This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
