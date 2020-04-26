@@ -1,33 +1,13 @@
 #include <stdio.h>
 #include <ctype.h>
-#include <stdlib.h>
-#include <math.h>
 #include <string.h>
+#include "jac.h"
 
-#define MAX 1000
+int main() {
 
-struct n{
-	double value;
-	char op;
-	struct n *next;
-	char unary;
-};
-
-void add_item(struct n **ptr, double data, char s);
-void print_num(double x);
-void remove_spaces(char *str);
-void multiply (struct n *head, struct n *end);
-void divide (struct n *head, struct n *end);
-void add (struct n *head, struct n *end);
-void calculate (struct n *head, struct n *end, _Bool *operation);
-void del_next(struct n *head);
-void unary (struct n *head, struct n *end);
-unsigned long factorial(unsigned long f);
-
-int main()
-{
 	struct n *head = NULL;
 	struct n *end;
+	
 	char line[MAX];
 	char *buf = line;
 	int n;
@@ -35,7 +15,8 @@ int main()
 	double tmp;
 
 	_Bool success = 1;
-	_Bool operation[6] = {0};
+	_Bool operation[6] = {0}; 	/* Setting the bit describes type of the operation:
+								   operation[2] = 1 if unary */
 	
 	int len = 0;
 	
@@ -43,7 +24,7 @@ int main()
 	
 	for(;;) {
         
-        if(fgets(buf = line, MAX, stdin) == NULL || *buf == 'q')
+        if (fgets(buf = line, MAX, stdin) == NULL || *buf == 'q')
             break;
         
 		remove_spaces(buf);		
@@ -51,6 +32,7 @@ int main()
 		while (*buf && *buf != '\n' && len < MAX) {
 		
 			if ( isdigit(*buf) || ( (*buf == '+' || *buf == '-') && len == 0) ) {
+			
 				sscanf(buf, "%lf%n", &num, &n);
 				add_item(&head, num, '?');
 				buf += n;
@@ -65,10 +47,12 @@ int main()
 			}
 			
 			if ( buf[-1] == '(' && (*buf == '+' || *buf == '-') ) {
+			
 				sscanf(buf, "%lf%n", &num, &n);
 				add_item(&head, num, '?');
 				buf += n;
 				len += n;
+				
 			}
 		    			
 			else if (*buf == '/' || *buf == '*' || *buf == '+' || *buf == '-') {
@@ -94,7 +78,8 @@ int main()
 				buf +=n;
 				len +=n;
 				
-				if(*buf=='/'){
+				if (*buf=='/') {
+				
 					buf++;
 					len++;
 					sscanf(buf, "%lf%n", &tmp, &n);
@@ -103,12 +88,13 @@ int main()
 					num = num/tmp;
 					printf("result: %lf\n", num);
 				}
+				
 				head->value = pow(head->value, num);
 			}
 			
 		    else if (*buf == '(') {
 		    
-				if(head != NULL && head->op == '?') {
+				if (head != NULL && head->op == '?') {
 					head->op = '*';
 					operation[0] = 1;
 				}
@@ -131,6 +117,13 @@ int main()
 		        len += 3;
 		    }
 		    
+		    else if (strncmp(buf, "bin_dec", 7) == 0 || strncmp(buf, "dec_bin", 7) == 0 ) {
+				operation[2] = 1;
+				add_item(&head, 0, *buf);
+		        buf += 7;
+		        len += 7;
+		    }
+		    
 		    else if (strncmp(buf, "ln", 2) == 0) {
 		    	operation[2] = 1;
 				add_item(&head, 0, 'n');
@@ -149,7 +142,7 @@ int main()
 		    	buf++;
 		} /* end of while (*buf && *buf != '\n' && len < MAX) */
 		    
-		if(len == MAX) {
+		if (len == MAX) {
 			printf("The limit size of the expression was reached\n");
 			return 1;
 		}
@@ -185,8 +178,8 @@ void add_item(struct n **ptr, double data, char s)
 		*ptr = item;
 }
 
-void print_num(double x)
-{
+void print_num(double x) {
+
     double i, r = modf(x, &i);
     
     if (fabs(r) <.00001)
@@ -195,30 +188,33 @@ void print_num(double x)
     else printf("%.20lf ", x);
 }
 
-void remove_spaces(char *str)
-{ 
+void remove_spaces(char *str) {
+
     int count = 0;
-  
-    for (int i = 0; str[i]; i++)
+  	int i;
+    for ( i = 0; str[i]; i++)
         if (str[i] != ' ')
             str[count++] = str[i];
                                     
     str[count] = '\0';
 }
 
-void calculate (struct n *head, struct n *end, _Bool *operation)
-{
-		if(operation[2] == 1)
+void calculate (struct n *head, struct n *end, _Bool *operation) {
+
+		if (operation[2] == 1)
 			unary(head, end);
-		if(operation[0] == 1)
+			
+		if (operation[0] == 1)
 			multiply(head, end);
-		if(operation[5] == 1)
+			
+		if (operation[5] == 1)
 			divide(head, end);
-		if(operation[1] == 1 || operation[3] == 1)
+			
+		if (operation[1] == 1 || operation[3] == 1)
 			add(head, end);
 }
 
-void unary (struct n *head, struct n *end)
+void unary (struct n *head, struct n *end)		/* Evaluate unary operations */
 {
     if (head->next == end || head->next == NULL)
         return;
@@ -233,9 +229,21 @@ void unary (struct n *head, struct n *end)
 					del_next(head);
 					unary(head, end);
 					break;
+				
+				case 'b':
+					head->value = bin_dec(head->value);
+					del_next(head);
+					unary(head, end);
+					break;
 					
 				case 'c':
 					head->value = cos(head->value);
+					del_next(head);
+					unary(head, end);
+					break;
+					
+				case 'd':
+					head->value = dec_bin(head->value);
 					del_next(head);
 					unary(head, end);
 					break;
@@ -296,90 +304,4 @@ void unary (struct n *head, struct n *end)
 		else
 			unary(head->next, end);
 	}
-}
-
-void multiply (struct n *head, struct n *end)
-{
-	double result;
-
-    if (head->next == end || head->next == NULL)
-        return;
-   
-    else {
-		
-		if ((head->next)->op == '*') {
-			result = (head->next)->value * head->value;
-			head->value = result;
-			del_next(head);
-			multiply(head, end);
-		}
-		
-		else
-			multiply(head->next, end);
-	}
-}
-
-void divide (struct n *head, struct n *end)
-{
-	double result;
-
-    if (head->next == end || head->next == NULL)
-        return;
-   
-    else {
-		
-		if ((head->next)->op == '/') {
-			result = (head->next)->value / head->value;
-			head->value = result;
-			del_next(head);
-			divide(head, end);
-		}
-		
-		else
-			divide(head->next, end);
-	}
-}
-
-void add (struct n *head, struct n *end)
-{
-
-	double result;
-
-    if (head->next == end || head->next == NULL)
-        return;
-   
-    else {
-		
-		if ((head->next)->op == '+' || (head->next)->op == '-') {
-		
-			if ((head->next)->op == '+')
-       	    	result = (head->next)->value +1 * head->value;
-       	    	
-            else {
-       			result = (head->next)->value -1 * head->value;
-       		}
-
-			head->value = result;
-			del_next(head);
-			add(head, end);
-		}
-		
-		else
-			add(head->next, end);
-	}
-}
-
-void del_next (struct n *before_del_next)
-{
-    struct n *temp;
-    temp = before_del_next->next;
-    before_del_next->next = temp->next;
-    free(temp);
-}
-
-unsigned long factorial(unsigned long f)
-{
-    if ( f == 0 ) 
-        return 1;
-    return(f * factorial(f - 1));
 }

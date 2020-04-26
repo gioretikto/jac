@@ -1,4 +1,4 @@
-<h1>JAC 0.3 - Just Another Calculator</h1>
+<h1>JAC 0.5 - Just Another Calculator</h1>
 
 <p>This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -7,7 +7,7 @@ the Free Software Foundation, either version 3 of the License, or
 
 <p>This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.</p>
 
 <p>You should have received a copy of the GNU General Public License
@@ -46,6 +46,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 	- sqrt(x) Returns the square root of x
 	
 	- n! Returns factorial of n
+	
+	- bin_dec(x) Conversion of binary x to decimal
+	
+	- dec_bin(x) Conversion of decimal x to binary
 
 <h3>Contacts</h3>
 

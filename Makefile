@@ -1,13 +1,14 @@
 CC = gcc
 CFLAGS = -Wall -pedantic -Wextra -std=c99
 LDFLAGS = -lm
-OBJFILES = jac.o
+OBJFILES = jac.o functions.o
 TARGET = jac
+
 all: $(TARGET)
 
 $(TARGET): $(OBJFILES)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
 clean:
-	rm -f $(OBJFILES) $(TARGET)
+	rm -f $(OBJFILES)
 install:
 	cp $(TARGET) /usr/local/bin
