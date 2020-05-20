@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -pedantic -Wextra -std=c99
+CFLAGS = -Wall -Wextra
 LDFLAGS = -lm
 OBJFILES = jac.o functions.o
 TARGET = jac

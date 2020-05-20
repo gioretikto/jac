@@ -16,8 +16,7 @@ int main() {
 
 	_Bool success = 1;
 	_Bool operation[6] = {0}; 	/* Setting the bit describes type of the operation:
-								   operation[2] = 1 if unary */
-	
+								   operation[2] = 1 if unary */	
 	int len = 0;
 	
 	printf("Enter q to quit\n>>");
@@ -38,7 +37,7 @@ int main() {
 				buf += n;
 				len += n;				
 							
-				if ( *buf == '!') { /* Factorial */
+				if (*buf == '!') { /* Factorial */
 					buf++;
 					head->value = factorial(head->value);
 					len++;
@@ -46,7 +45,15 @@ int main() {
 			
 			}
 			
-			if ( buf[-1] == '(' && (*buf == '+' || *buf == '-') ) {
+			else if (strncmp(buf, "pi", 2) == 0) {
+			 
+		    	add_item(&head, M_PI, '?');
+		    	buf += 2;
+		        len += 2;
+		    
+		    }			
+			
+			else if ( buf[-1] == '(' && (*buf == '+' || *buf == '-') ) {
 			
 				sscanf(buf, "%lf%n", &num, &n);
 				add_item(&head, num, '?');
@@ -98,6 +105,7 @@ int main() {
 					head->op = '*';
 					operation[0] = 1;
 				}
+				
 				end = head;
 				buf++;
 				len++;		
@@ -122,8 +130,8 @@ int main() {
 				add_item(&head, 0, *buf);
 		        buf += 7;
 		        len += 7;
-		    }
-		    
+		    }		    
+    
 		    else if (strncmp(buf, "ln", 2) == 0) {
 		    	operation[2] = 1;
 				add_item(&head, 0, 'n');

@@ -1,4 +1,4 @@
-<h1>JAC 0.5 - Just Another Calculator</h1>
+<h1>JAC 0.7 - Just Another Calculator</h1>
 
 <p>This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>or</p>
 
-<pre>4+4.5-(34/(8*3-3))</pre>
+<pre>4+4.5-(34/(8*3-3)) = 6.88095238095238137532</pre>
 
 <p>The syntax for other mathematical operators is the following</p>
 
@@ -53,4 +53,4 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <h3>Contacts</h3>
 
-<p>You can reach me on the freenode IRC channel #cansi</p>
+<p>You can reach me on the freenode IRC channel #cansi or giovannirestadev@gmail.com</p>
