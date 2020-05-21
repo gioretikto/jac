@@ -4,14 +4,14 @@
 #define MAX 1000
 
 struct n{
-	double value;
+	long double value;
 	char op;
 	struct n *next;
 	char unary;
 };
 
-void add_item(struct n **ptr, double data, char s);
-void print_num(double x);
+void add_item(struct n **ptr, long double data, char s);
+void print_num(long double x);
 void remove_spaces(char *str);
 void multiply (struct n *head, struct n *end);
 void divide (struct n *head, struct n *end);

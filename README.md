@@ -23,6 +23,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <pre>4+4.5-(34/(8*3-3)) = 6.88095238095238137532</pre>
 
+<p>You can also pass the expression as argument at the command line</p>
+
+<pre>jac 7*8</pre>
+
+<p>If you pass the expression at the command line, please be mindful that bash treats parenthesis as special charachters therefore escaping is needed:</p>
+
+<pre>jac 4+4.5-\(34/\(8*3-3\)\)</pre>
+
 <p>The syntax for other mathematical operators is the following</p>
 
 	- acos(x) Returns the angle (0 to π radians) whose cosine is x
@@ -50,6 +58,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 	- bin_dec(x) Conversion of binary x to decimal
 	
 	- dec_bin(x) Conversion of decimal x to binary
+	
+<h2>Constants</h2>
+
+- pi = 3.14159265358979323846
+
+<pre>>>cos(pi)
+-1
+</pre>
 
 <h3>Contacts</h3>
 
