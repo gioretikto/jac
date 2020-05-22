@@ -1,7 +1,12 @@
 #include <math.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define MAX 1000
+
+#ifndef PI
+#define PI 3.141592653589793238462643383279502884L
+#endif
 
 struct n{
 	long double value;
@@ -22,3 +27,4 @@ void unary (struct n *head, struct n *end);
 unsigned long factorial(unsigned long f);
 int bin_dec(long long n);
 long long dec_bin(int n);
+bool parse_expression(char *buf);

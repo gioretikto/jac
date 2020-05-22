@@ -1,10 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include <stdbool.h>
 #include "jac.h"
-
-bool parse_expression(char *buf);
 
 int main(int argc, char* argv[]) {
 
@@ -76,7 +73,7 @@ bool parse_expression(char *buf) {
 				
 				else if (strncmp(buf, "pi", 2) == 0) {
 				 
-					add_item(&head, M_PI, '?');
+					add_item(&head, PI, '?');
 					buf += 2;
 				    len += 2;
 				
@@ -222,7 +219,7 @@ void print_num(long double x) {
     if (fabs(r) <.00001)
         printf("%.Lf ", i);
     
-    else printf("%.25Lf ", x);
+    else printf("%.19Lf ", x);
 }
 
 void remove_spaces(char *str) {
