@@ -20,6 +20,8 @@ int main(int argc, char* argv[]) {
 		}
 		
 		parse_expression(line);
+		
+		return 0;
 	}
 	
 	for(;;) {
@@ -30,6 +32,8 @@ int main(int argc, char* argv[]) {
 		remove_spaces(buf);
 		
 		parse_expression(buf);
+		
+		printf(">>");
 		
 	}
 
