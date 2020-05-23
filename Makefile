@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -ggdb3
 LDFLAGS = -lm
-OBJFILES = jac.o functions.o
+OBJFILES = jac.o functions.o parser.o
 TARGET = jac
 
 all: $(TARGET)

@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
