@@ -42,13 +42,13 @@ int main(int argc, char* argv[]) {
 
 void add_item(struct n **ptr, long double data, char s)
 {
-        struct n *item = malloc(sizeof *item);
+	struct n *item = malloc(sizeof *item);
 
-		item->value = data;
-		item->next = *ptr;
-		item->op = '?';
-		item->unary = s;
-		*ptr = item;
+	item->value = data;
+	item->next = *ptr;
+	item->op = '?';
+	item->unary = s;
+	*ptr = item;
 }
 
 void print_num(long double x) {
