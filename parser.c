@@ -16,7 +16,7 @@ bool parse_expression(char *buf) {
 
 	while (*buf && *buf != '\n' && len < MAX) {
 			
-		if ( isdigit(*buf) || ( (*buf == '+' || *buf == '-') && len == 0) ) {
+		if (isdigit(*buf) || ( (*buf == '+' || *buf == '-') && len == 0)) {
 				
 			sscanf(buf, "%Lf%n", &num, &n);
 			
@@ -26,17 +26,18 @@ bool parse_expression(char *buf) {
 			}
 			
 			else {
+			
 				add_item(&head, num, '?');
+				
 				buf += n;
 				len += n;
-
 			
 				if (*buf == '!') { /* Factorial */
 					buf++;
 					head->value = factorial(head->value);
 					len++;
-				}				
-			}			
+				}	
+			}
 		}
 				
 		else if (strncmp(buf, "pi", 2) == 0) {
@@ -47,7 +48,7 @@ bool parse_expression(char *buf) {
 				
 		}
 				
-		else if ( buf[-1] == '(' ) {
+		else if (buf[-1] == '(') {
 				
 			sscanf(buf, "%Lf%n", &num, &n);
 			
@@ -55,12 +56,12 @@ bool parse_expression(char *buf) {
 				success = false;
 				break;	
 			}
+			
 			else {			
 				add_item(&head, num, '?');
 				buf += n;
 				len += n;
-			}
-				
+			}				
 		}
 							
 		else if (*buf == '/' || *buf == '*' || *buf == '+' || *buf == '-') {
@@ -88,16 +89,17 @@ bool parse_expression(char *buf) {
 				
 			if (n == 0) {
 				success = false;
-				break;	
+				break;
 			}
 				
 			else {
+			
+				printf("Num is: %Lf\n", num);
 				
 				buf += n;
 				len += n;
 				
 				head->value = pow(head->value, num);
-			
 			}
 		}
 				
@@ -110,7 +112,7 @@ bool parse_expression(char *buf) {
 					
 			end = head;
 			buf++;
-			len++;		
+			len++;
 		}
 				
 		else if (*buf == ')') {
@@ -153,7 +155,7 @@ bool parse_expression(char *buf) {
 	} /* end of while (*buf && *buf != '\n' && len < MAX) */
 		    
 	if (len == MAX) {
-		printf("The limit size of the expression was reached\n");
+		fprintf(stderr,"%s\n","The limit size of the expression was reached");
 		return false;
 	}
 						
@@ -164,7 +166,7 @@ bool parse_expression(char *buf) {
 		free(head);
 	}
 
-	else 
+	else
 		fprintf(stderr,"%s\n","Syntax error");
 
 	head = NULL;
