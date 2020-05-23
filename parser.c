@@ -3,7 +3,6 @@
 bool parse_expression(char *buf) {
 
 	long double num;
-	long double tmp;
 
 	bool success = 1;
 	bool operation[6] = {0}; 	/* Setting the bit describes type of the operation:
@@ -12,40 +11,55 @@ bool parse_expression(char *buf) {
 	struct n *head = NULL;
 	struct n *end = NULL;
 
-	int len = 0;
-	int n;
+	unsigned int len = 0;
+	unsigned int n = 0;
 
 	while (*buf && *buf != '\n' && len < MAX) {
 			
 		if ( isdigit(*buf) || ( (*buf == '+' || *buf == '-') && len == 0) ) {
 				
 			sscanf(buf, "%Lf%n", &num, &n);
-			add_item(&head, num, '?');
-			buf += n;
-			len += n;
-								
-			if (*buf == '!') { /* Factorial */
-				buf++;
-				head->value = factorial(head->value);
-				len++;
+			
+			if (n == 0) {
+				success = false;
+				break;	
 			}
-				
+			
+			else {
+				add_item(&head, num, '?');
+				buf += n;
+				len += n;
+
+			
+				if (*buf == '!') { /* Factorial */
+					buf++;
+					head->value = factorial(head->value);
+					len++;
+				}				
+			}			
 		}
 				
 		else if (strncmp(buf, "pi", 2) == 0) {
 			 
-			add_item(&head, PI, '?');
+			add_item(&head, M_PIl, '?');
 			buf += 2;
 		    len += 2;
 				
 		}
 				
-		else if ( buf[-1] == '(' && (*buf == '+' || *buf == '-') ) {
+		else if ( buf[-1] == '(' ) {
 				
 			sscanf(buf, "%Lf%n", &num, &n);
-			add_item(&head, num, '?');
-			buf += n;
-			len += n;
+			
+			if (n == 0) {
+				success = false;
+				break;	
+			}
+			else {			
+				add_item(&head, num, '?');
+				buf += n;
+				len += n;
+			}
 				
 		}
 							
@@ -58,7 +72,7 @@ bool parse_expression(char *buf) {
 			}
 					
 			else { /*Syntax Error*/
-				success = 0;
+				success = false;
 				break;
 			}
 					
@@ -66,24 +80,25 @@ bool parse_expression(char *buf) {
 		}
 				
 		else if (*buf == '^') {
+		
 			buf++;
 			len++;
+			
 			sscanf(buf, "%Lf%n", &num, &n);
-			buf +=n;
-			len +=n;
-					
-			if (*buf=='/') {
-					
-				buf++;
-				len++;
-				sscanf(buf, "%Lf%n", &tmp, &n);
+				
+			if (n == 0) {
+				success = false;
+				break;	
+			}
+				
+			else {
+				
 				buf += n;
 				len += n;
-				num = num/tmp;
-				printf("result: %Lf\n", num);
+				
+				head->value = pow(head->value, num);
+			
 			}
-					
-			head->value = pow(head->value, num);
 		}
 				
 		else if (*buf == '(') {
@@ -135,27 +150,27 @@ bool parse_expression(char *buf) {
 				
 		else
 			buf++;
-			} /* end of while (*buf && *buf != '\n' && len < MAX) */
+	} /* end of while (*buf && *buf != '\n' && len < MAX) */
 		    
-		if (len == MAX) {
-			printf("The limit size of the expression was reached\n");
-			return false;
-		}
+	if (len == MAX) {
+		printf("The limit size of the expression was reached\n");
+		return false;
+	}
 						
-		if (success == 1 && head != NULL) {
-			calculate(head, end, operation);
-			print_num(head->value);
-			putchar('\n');
-			free(head);
-		}
+	if (success == 1 && head != NULL) {
+		calculate(head, end, operation);
+		print_result(head->value);
+		putchar('\n');
+		free(head);
+	}
 
-		else 
-			printf("Syntax Error\n");
+	else 
+		fprintf(stderr,"%s\n","Syntax error");
 
-		head = NULL;
-		success = 1;
-		len = 0;
-		memset(operation, 0, 6);
+	head = NULL;
+	success = 1;
+	len = 0;
+	memset(operation, 0, 6);
 				
-		return true;
+	return true;
 }

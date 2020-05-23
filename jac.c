@@ -51,9 +51,15 @@ void add_item(struct n **ptr, long double data, char s)
 	*ptr = item;
 }
 
-void print_num(long double x) {
+void print_result(long double x) {
 
-    long double i, r = modfl(x, &i);
+    long double i;
+    long double tmp = ceil(x);
+    
+    if (fabs(x-tmp) < 0.00000001)
+    	x = tmp;
+    
+    long double r = modfl(x, &i);
     
     if (fabs(r) <.00001)
         printf("%.Lf ", i);

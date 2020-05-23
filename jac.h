@@ -7,8 +7,8 @@
 
 #define MAX 1000
 
-#ifndef PI
-#define PI 3.141592653589793238462643383279502884L
+#ifndef M_PIl
+#define M_PIl 3.141592653589793238462643383279502884L
 #endif
 
 struct n{
@@ -19,7 +19,7 @@ struct n{
 };
 
 void add_item(struct n **ptr, long double data, char s);
-void print_num(long double x);
+void print_result(long double x);
 void remove_spaces(char *str);
 void multiply (struct n *head, struct n *end);
 void divide (struct n *head, struct n *end);
