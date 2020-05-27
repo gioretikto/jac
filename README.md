@@ -1,4 +1,4 @@
-<h1>JAC 0.7 - Just Another Calculator</h1>
+<h1>JAC 1.1 2020- Just Another Calculator - Giovanni Resta</h1>
 
 <p>This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,11 +17,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one) able to perform calculation such as:</p>
 
+<p>4000*ln2 or 4000ln2 = 2772.5887222397811449071</pre>
+
 <pre>tan(50+1)*3</pre>
 
 <p>or</p>
 
-<pre>4+4.5-(34/(8*3-3)) = 6.88095238095238137532</pre>
+<pre>4+4.5-(34/(8*3-3)) = 6.8809523809523809525</pre>
+<pre>100 exp^-(ln2)1000/1590</pre>
 
 <p>You can also pass the expression as argument at the command line</p>
 
@@ -45,7 +48,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 	- tan(x) Returns the tangent of x (x in radians)
 
-	- exp(x) Returns the exponential function of x (e<sup>x</sup>)
+	- e^x Returns the exponential function of x (e<sup>x</sup>)
 
 	- ln(x) Returns the natural logarithm of x
 
@@ -54,6 +57,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 	- sqrt(x) Returns the square root of x
 	
 	- n! Returns factorial of n
+	
+	- cbrt(x) Returns the cube root of x
 	
 	- bin_dec(x) Conversion of binary x to decimal
 	
@@ -69,4 +74,5 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <h3>Contacts</h3>
 
-<p>You can reach me on the freenode IRC channel #cansi or giovannirestadev@gmail.com</p>
+<p>All the best,
+Giovanni Resta <giovannirestadev@gmail.com></p>

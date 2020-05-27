@@ -1,178 +1,386 @@
 #include "jac.h"
 
-bool parse_expression(char *buf) {
+long double parse_evaluate_expr(struct control *jac, char end_char) {
 
-	long double num;
-
-	bool success = 1;
-	bool operation[6] = {0}; 	/* Setting the bit describes type of the operation:
-								   operation[2] = 1 if unary */	
-
-	struct n *head = NULL;
-	struct n *end = NULL;
-
-	unsigned int len = 0;
+	long double number, result;
+	
+	bool success = true;
+	
 	unsigned int n = 0;
-
-	while (*buf && *buf != '\n' && len < MAX) {
-			
-		if (isdigit(*buf) || ( (*buf == '+' || *buf == '-') && len == 0)) {
-				
-			sscanf(buf, "%Lf%n", &num, &n);
-			
-			if (n == 0) {
-				success = false;
-				break;	
-			}
-			
-			else {
-			
-				add_item(&head, num, '?');
-				
-				buf += n;
-				len += n;
-			
-				if (*buf == '!') { /* Factorial */
-					buf++;
-					head->value = factorial(head->value);
-					len++;
-				}	
-			}
-		}
-				
-		else if (strncmp(buf, "pi", 2) == 0) {
-			 
-			add_item(&head, M_PIl, '?');
-			buf += 2;
-		    len += 2;
-				
-		}
-				
-		else if (buf[-1] == '(') {
-				
-			sscanf(buf, "%Lf%n", &num, &n);
-			
-			if (n == 0) {
-				success = false;
-				break;	
-			}
-			
-			else {			
-				add_item(&head, num, '?');
-				buf += n;
-				len += n;
-			}				
-		}
-							
-		else if (*buf == '/' || *buf == '*' || *buf == '+' || *buf == '-') {
-				
-			operation[*buf - 42] = 1;
-					
-			if (head->op == '?') {
-				head->op = *buf;
-			}
-					
-			else { /*Syntax Error*/
-				success = false;
-				break;
-			}
-					
-			buf++;
-		}
-				
-		else if (*buf == '^') {
+	
+	struct n *head = NULL;
+	
+	while ((jac->len < MAX) && *jac->buf != '\0') {
+	
+		if (*(jac->buf) == '/' || *(jac->buf) == '*' || *(jac->buf) == '+' || *(jac->buf) == '-') {
 		
-			buf++;
-			len++;
-			
-			sscanf(buf, "%Lf%n", &num, &n);
-				
-			if (n == 0) {
-				success = false;
-				break;
-			}
-				
-			else {
-			
-				printf("Num is: %Lf\n", num);
-				
-				buf += n;
-				len += n;
-				
-				head->value = pow(head->value, num);
-			}
+			if (head != NULL && head->op == '?')
+				head->op = *(jac->buf);		
+
+			incrementBuff(jac,1);
 		}
-				
-		else if (*buf == '(') {
+	
+		if (1 == sscanf(jac->buf, "%Lf%n", &number, &n)) {
+		
+ 			add_item(&head, number);
+			incrementBuff(jac,n);
 			
-			if (head != NULL && head->op == '?') {
+			if (*(jac->buf) != '+' && *(jac->buf) != '-' && *(jac->buf) != '/' && *(jac->buf) != '\0') /* A situation like 5( or 5ln*/
 				head->op = '*';
-				operation[0] = 1;
+				
+			else {
+				head->op = *(jac->buf);
+				incrementBuff(jac,1);
 			}
-					
-			end = head;
-			buf++;
-			len++;
 		}
-				
-		else if (*buf == ')') {
-			calculate(head, end, operation);
-			end = NULL;
-			buf++;
-			len++;
-		}
-				
-		else if (strncmp(buf, "sin", 3) == 0 || strncmp(buf, "cos", 3) == 0 || strncmp(buf, "tan", 3) == 0 || strncmp(buf, "exp", 3) == 0 || strncmp(buf, "log", 3) == 0  ) {
-			operation[2] = 1;
-			add_item(&head, 0, *buf);
-		    buf += 3;
-		    len += 3;
-		}
-				
-		else if (strncmp(buf, "bin_dec", 7) == 0 || strncmp(buf, "dec_bin", 7) == 0 ) {
-			operation[2] = 1;
-			add_item(&head, 0, *buf);
-		    buf += 7;
-		    len += 7;
-		}		    
 		
-		else if (strncmp(buf, "ln", 2) == 0) {
-			operation[2] = 1;
-			add_item(&head, 0, 'n');
-		    buf += 2;
-		    len += 2;
-		}
-				
-		else if (strncmp(buf, "sqrt", 4) == 0 || strncmp(buf, "asin", 4) == 0  || strncmp(buf, "acos", 4) == 0 || strncmp(buf, "atan", 4) == 0) {
-			operation[2] = 1;
-			add_item(&head, 0, buf[2]);
-		    buf += 4;
-		    len += 4;
-		}
-				
-		else
-			buf++;
-	} /* end of while (*buf && *buf != '\n' && len < MAX) */
-		    
-	if (len == MAX) {
-		fprintf(stderr,"%s\n","The limit size of the expression was reached");
-		return false;
-	}
+		if ((*(jac->buf) == '(' || *(jac->buf) == '[' || *(jac->buf) == '{')) {
+		
+			number = evaluatePar(jac);
+			add_item(&head, number);
 						
-	if (success == 1 && head != NULL) {
-		calculate(head, end, operation);
-		print_result(head->value);
-		putchar('\n');
+		}
+		
+		else if ((*(jac->buf) == ')' || *(jac->buf) == ']' || *(jac->buf) == '}')) {
+		
+			incrementBuff(jac,1);
+			
+			if (isdigit(*(jac->buf)))
+				head->op = '*';
+		
+			if (end_char != '\0')
+				break;
+		}
+		
+		else if (strncmp(jac->buf, "pi", 2) == 0) {
+		
+			add_item(&head, M_PIl);
+			incrementBuff(jac,2);
+		
+		}
+		
+		if (*(jac->buf) == '^') {
+		
+			incrementBuff(jac,1);
+			number = evaluateFunc(jac, 'e');
+			head->value = pow(head->value, number);
+			
+		}
+		
+		if (*(jac->buf) == '!') { /* Factorial */
+			
+			head->value = factorial(head->value);
+			incrementBuff(jac,1);
+				
+		}	
+		
+		else if (strncmp(jac->buf, "cos", 3) == 0) {
+		
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, 'c');
+			add_item(&head, number);
+				
+		}
+		
+		else if (strncmp(jac->buf, "sin", 3) == 0) {
+		
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, 's');
+			add_item(&head, number);
+				
+		}
+		
+		else if (strncmp(jac->buf, "tan", 3) == 0) {
+				
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, 't');
+			add_item(&head, number);
+				
+		}
+		 
+		else if (strncmp(jac->buf, "atan", 4) == 0) {
+				
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, 'a');
+			add_item(&head, number);
+				
+		}
+		
+		else if (strncmp(jac->buf, "acos", 4) == 0) {
+				
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, 'o');
+			add_item(&head, number);
+				
+		}		   
+
+		else if (strncmp(jac->buf, "log", 3) == 0) {
+		
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, 'g');
+			add_item(&head, number);
+		
+		}
+		
+		else if (strncmp(jac->buf, "sqrt", 4) == 0) {
+		
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, 'r');
+			add_item(&head, number);
+		
+		}
+		 		 
+		else if (strncmp(jac->buf, "ln", 2) == 0) {
+			
+			incrementBuff(jac,2);
+			number = evaluateFunc(jac, 'l');
+			add_item(&head, number);
+			
+		}
+		
+		else if (*(jac->buf) == 'e') {
+		
+			incrementBuff(jac,2);
+			number = evaluateFunc(jac, 'x');
+			add_item(&head, number);
+				
+		}
+		
+		else if (strncmp(jac->buf, "bin_dec", 7) == 0) {
+		
+			incrementBuff(jac,7);
+			number = evaluateFunc(jac, 'b');
+			add_item(&head, number);
+		
+		}
+		
+		else if (strncmp(jac->buf, "dec_bin", 7) == 0) {
+		
+			incrementBuff(jac,7);
+			number = evaluateFunc(jac, 'd');
+			add_item(&head, number);
+		
+		}
+		
+		else if (strncmp(jac->buf, "asin", 4) == 0) {
+		
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, 'i');
+			add_item(&head, number);
+			
+		}
+		
+				
+		else if (strncmp(jac->buf, "cbrt", 4) == 0) {
+		
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, 'u');
+			add_item(&head, number);
+			
+		}
+		
+		else
+			continue;
+		
+	} /* End of parsing */
+		    
+	if (jac->len == MAX) {
+	
+		fprintf(stderr,"%s\n","The limit size of the expression was reached");
+		
+		if (head != NULL)
+			free(head);
+			
+		exit(0);
+	}
+	
+	else if (head == NULL)
+		return 0;
+						
+	else if (success == true && head != NULL) {
+	
+		if (head->next != NULL)
+			calculate(head);
+		
+		result = head->value;
+		
 		free(head);
+		
+		return result;
 	}
 
-	else
+	else {
 		fprintf(stderr,"%s\n","Syntax error");
+		exit(0);
+	}
+	
+	return false;
+}
 
-	head = NULL;
-	success = 1;
-	len = 0;
-	memset(operation, 0, 6);
+long double evaluatePar (struct control *jac) {
+
+	incrementBuff(jac,1);
+
+	long double number;
+		
+	number = parse_evaluate_expr(jac,'$');
+	
+	return number;
+}
+
+void add_item(struct n **ptr, long double data)
+{
+	struct n *new_item = malloc(sizeof *new_item);
+     
+	new_item->value = data;
+    new_item->next = *ptr;
+    new_item->op = '?';
+    *ptr = new_item;
+}
+
+void calculate (struct n *head) {
+
+	struct n *tmp = head;
+
+	/* Multiply and divide first */
+
+	while (tmp->next != NULL && tmp->next->op != '?') {
+
+		if (tmp->next->op == '*' || tmp->next->op == '/') {
+		
+			if (tmp->next->op == '*')
+				tmp->value = tmp->next->value * tmp->value;
+			
+			else
+				tmp->value = tmp->next->value / tmp->value;
+			
+			delNextNode(tmp);
+		}
+		
+		else
+			tmp = tmp->next;
+	}
+	
+	tmp = head;
+
+	/* Now do addition and subtraction */
+
+	while (tmp != NULL && tmp->next != NULL && tmp->next->op != '?') {	
+
+		if (tmp->next->op == '+' || tmp->next->op == '-') {
+		
+			if (tmp->next->op  == '+')
+				tmp->value = tmp->next->value + tmp->value;
+			
+			else
+				tmp->value = tmp->next->value - tmp->value;
+			
+			delNextNode(tmp);
+		}
+		
+		else
+			tmp = tmp->next;
+	}
+}
+
+void delNextNode (struct n *head) {
+
+	struct n *tmp = head->next;
+	head->next = head->next->next;
+	free(tmp);
+}
+
+long double evaluateFunc (struct control *jac, char op) {
+
+	long double number;
+	unsigned int n = 0;
+		
+    if (1 == sscanf(jac->buf, "%Lf%n", &number, &n)) {
+    	incrementBuff(jac,n);
+		return switchFunc(&op, &number);
+	}
+	
+	else if (*(jac->buf) == '(' || *(jac->buf) == '[' || *(jac->buf) == '{') {
+			
+		number = evaluatePar(jac);		
 				
-	return true;
+		return switchFunc(&op, &number);
+	}
+			
+	else
+		return false;
+}
+
+long double switchFunc(char *op, long double *number) {
+
+	switch(*op) {
+	
+		case 'a':
+			return atan(*number);
+			break;
+			
+		case 'b':
+			return bin_dec(*number);
+			break;
+			
+		case 'c':
+	    	return cos(*number);
+	    	break;
+	    	
+	    case 'd':
+	    	return dec_bin(*number);
+	    	break;
+	
+		case 'e':
+			return *number;
+			break;
+			
+	    case 'g':
+	    	return log10(*number);
+	    	break;
+	    	
+	    case 'i':
+	    	return asin(*number);
+	    	break;
+			
+    	case 'l':
+	    	return log(*number);
+	    	break;
+	    	
+	   	case 'o':
+	    	return acos(*number);
+	    	break;
+	    	
+	    case 'r':
+			return sqrt(*number);
+			break;	    	
+	    	
+		case 's':
+			return sin(*number);
+			break;
+			
+		case 't':
+			return tan(*number);
+			break;
+			
+		case 'u':
+			return cbrt(*number);
+			break;
+			
+		case 'x':
+			return exp(*number);
+			break;
+			 	
+	    default:
+			return false;
+		   	break;
+	}
+  
+}
+
+void incrementBuff (struct control *jac, int n) {
+
+	jac->buf += n;
+	jac->len += n;
+
 }

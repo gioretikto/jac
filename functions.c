@@ -1,84 +1,5 @@
 #include "jac.h"
 
-void multiply (struct n *head, struct n *end)
-{
-	double result;
-
-    if (head->next == end || head->next == NULL)
-        return;
-   
-    else {
-		
-		if ((head->next)->op == '*') {
-			result = (head->next)->value * head->value;
-			head->value = result;
-			del_next(head);
-			multiply(head, end);
-		}
-		
-		else
-			multiply(head->next, end);
-	}
-}
-
-void divide (struct n *head, struct n *end) {
-
-	double result;
-
-    if (head->next == end || head->next == NULL)
-        return;
-   
-    else {
-		
-		if ((head->next)->op == '/') {
-			result = (head->next)->value / head->value;
-			head->value = result;
-			del_next(head);
-			divide(head, end);
-		}
-		
-		else
-			divide(head->next, end);
-	}
-}
-
-void add (struct n *head, struct n *end) {
-
-	double result;
-
-    if (head->next == end || head->next == NULL)
-        return;
-   
-    else {
-		
-		if ((head->next)->op == '+' || (head->next)->op == '-') {
-		
-			if ((head->next)->op == '+')
-       	    	result = (head->next)->value +1 * head->value;
-       	    	
-            else {
-       			result = (head->next)->value -1 * head->value;
-       		}
-
-			head->value = result;
-			del_next(head);
-			add(head, end);
-		}
-		
-		else
-			add(head->next, end);
-	}
-}
-
-void del_next (struct n *before_del_next) {
-
-    struct n *temp;
-    temp = before_del_next->next;
-    before_del_next->next = temp->next;
-    free(temp);
-    
-}
-
 unsigned long factorial(unsigned long f) {
 
     if ( f == 0 ) 
@@ -114,4 +35,31 @@ long long dec_bin(int n) {
     }
     
     return bin;
+}
+
+void print_result(long double x) {
+
+    long double i;
+    long double tmp = ceil(x);
+    
+    if (fabs(x-tmp) < 0.00000001)
+    	x = tmp;
+    
+    long double r = modfl(x, &i);
+    
+    if (fabs(r) <.00001)
+        printf("%.Lf ", i);
+    
+    else printf("%.19Lf ", x);
+}
+
+void remove_spaces(char *str) {
+
+    int count = 0;
+  	int i;
+    for (i = 0; str[i]; i++)
+        if (str[i] != ' ' && str[i] != '\n')
+            str[count++] = str[i];
+                                    
+    str[count] = '\0';
 }

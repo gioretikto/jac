@@ -2,10 +2,15 @@
 
 int main(int argc, char* argv[]) {
 
-	char line[MAX];
+	char line[MAX];	
+	
 	char *buf = line;
 
 	int i;
+	
+	struct control jac;
+	
+	jac.len = 0;
 	
 	if (argc == 1)
 		printf("Enter q to quit\n>>");
@@ -14,173 +19,59 @@ int main(int argc, char* argv[]) {
 	
 		strcpy(line, argv[1]);
 
-		for ( i = 2; i < argc; i++)
-		{
-		  strcat(line, argv[i]);
+		for (i = 2; i < argc; i++)
+			strcat(line, argv[i]);
+		
+		if (!areParenthesisBalanced(line)) {
+		
+			fprintf(stderr,"%s\n","Syntax error: Mismatched parenthesis");
+			
+			return 0;
 		}
 		
-		parse_expression(line);
+		else if (!checkSyntax(line)) {
+			printf("%s\n", line);
+			return 0;
+		}
+		
+		else {
+		
+			jac.buf = line;
+							
+			remove_spaces(jac.buf);
+			
+			print_result(parse_evaluate_expr(&jac,'\0'));
+		}
 		
 		return 0;
 	}
 	
-	for(;;) {
+	for (;;) {
 	
-		if (fgets(buf = line, MAX, stdin) == NULL || *buf == 'q')
+		if (fgets(jac.buf = line, MAX, stdin) == NULL || *buf == 'q')
 			break;
+			
+		if (!areParenthesisBalanced(line)) {
+		
+			fprintf(stderr,"%s\n","Syntax error: Mismatched parenthesis");
+			
+			printf(">>");
+		}
+		
+		else if (!checkSyntax(line))
+			printf(">>");
+		
+		else {
         	
-		remove_spaces(buf);
-		
-		parse_expression(buf);
-		
-		printf(">>");
-		
+			remove_spaces(jac.buf);
+			
+			print_result(parse_evaluate_expr(&jac,'\0'));
+			
+			putchar('\n');
+					
+			printf(">>");
+		}	
 	}
 
 	return 0;
-}
-
-void add_item(struct n **ptr, long double data, char s)
-{
-	struct n *item = malloc(sizeof *item);
-
-	item->value = data;
-	item->next = *ptr;
-	item->op = '?';
-	item->unary = s;
-	*ptr = item;
-}
-
-void print_result(long double x) {
-
-    long double i;
-    long double tmp = ceil(x);
-    
-    if (fabs(x-tmp) < 0.00000001)
-    	x = tmp;
-    
-    long double r = modfl(x, &i);
-    
-    if (fabs(r) <.00001)
-        printf("%.Lf ", i);
-    
-    else printf("%.19Lf ", x);
-}
-
-void remove_spaces(char *str) {
-
-    int count = 0;
-  	int i;
-    for ( i = 0; str[i]; i++)
-        if (str[i] != ' ')
-            str[count++] = str[i];
-                                    
-    str[count] = '\0';
-}
-
-void calculate (struct n *head, struct n *end, bool *operation) {
-
-		if (operation[2] == 1)
-			unary(head, end);
-			
-		if (operation[0] == 1)
-			multiply(head, end);
-			
-		if (operation[5] == 1)
-			divide(head, end);
-			
-		if (operation[1] == 1 || operation[3] == 1)
-			add(head, end);
-}
-
-void unary (struct n *head, struct n *end)		/* Evaluate unary operations */
-{
-    if (head->next == end || head->next == NULL)
-        return;
-   
-    else {
-    
-    	if ((head->next)->unary != '?') {
-			switch( (head->next)->unary) {
-			
-				case 'a':
-					head->value = atan(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-				
-				case 'b':
-					head->value = bin_dec(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-					
-				case 'c':
-					head->value = cos(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-					
-				case 'd':
-					head->value = dec_bin(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-			
-				case 'e':
-					head->value = exp(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-					
-				case 'i':
-					head->value = asin(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-					
-				case 'l':
-					head->value = log10(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-					
-				case 'n':
-					head->value = log10(head->value);
-					del_next(head);
-					unary(head, end);
-					break;	
-					
-				case 'o':
-					head->value = acos(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-					
-				case 'r':
-					head->value = sqrt(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-					
-				case 's':
-					head->value = sin(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-					
-				case 't':
-					head->value = tan(head->value);
-					del_next(head);
-					unary(head, end);
-					break;
-					
-				default:
-					break;			
-			}
-		}
-		
-		else
-			unary(head->next, end);
-	}
 }
