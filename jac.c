@@ -11,6 +11,7 @@ int main(int argc, char* argv[]) {
 	struct control jac;
 	
 	jac.len = 0;
+	jac.caller = 0;
 	
 	if (argc == 1)
 		printf("Enter q to quit\n>>");
@@ -40,7 +41,7 @@ int main(int argc, char* argv[]) {
 							
 			remove_spaces(jac.buf);
 			
-			print_result(parse_evaluate_expr(&jac,'\0'));
+			print_result(parse_evaluate_expr(&jac));
 		}
 		
 		return 0;
@@ -65,7 +66,7 @@ int main(int argc, char* argv[]) {
         	
 			remove_spaces(jac.buf);
 			
-			print_result(parse_evaluate_expr(&jac,'\0'));
+			print_result(parse_evaluate_expr(&jac));
 			
 			putchar('\n');
 					

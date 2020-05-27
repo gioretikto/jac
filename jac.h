@@ -21,6 +21,7 @@ struct n{
 struct control{
 	char *buf;
 	int len;
+	bool caller;
 };
 
 void add_item(struct n **head, long double data);
@@ -29,7 +30,7 @@ void remove_spaces(char *str);
 void calculate (struct n *head);
 void delNextNode (struct n *node_pt);
 unsigned long factorial(unsigned long f);
-long double parse_evaluate_expr(struct control *jac, char end_char);
+long double parse_evaluate_expr(struct control *jac);
 long double evaluatePar (struct control *jac);
 bool areParenthesisBalanced(char *exp);
 bool checkSyntax(char *str);

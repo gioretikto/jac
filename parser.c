@@ -1,6 +1,6 @@
 #include "jac.h"
 
-long double parse_evaluate_expr(struct control *jac, char end_char) {
+long double parse_evaluate_expr(struct control *jac) {
 
 	long double number, result;
 	
@@ -36,6 +36,8 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 		
 		if ((*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')) {
 		
+			incrementBuff(jac,1);
+		
 			number = evaluatePar(jac);
 			add_item(&head, number);
 						
@@ -48,8 +50,10 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 			if (isdigit(*jac->buf))
 				head->op = '*';
 		
-			if (end_char != '\0')
+			if (jac->caller != 0) {
+				jac->caller = 0;
 				break;
+			}
 		}
 		
 		else if (strncmp(jac->buf, "pi", 2) == 0) {
@@ -219,11 +223,11 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 
 long double evaluatePar (struct control *jac) {
 
-	incrementBuff(jac,1);
-
 	long double number;
+	
+	jac->caller = 1;
 		
-	number = parse_evaluate_expr(jac,'$');
+	number = parse_evaluate_expr(jac);
 	
 	return number;
 }
@@ -265,7 +269,7 @@ void calculate (struct n *head) {
 
 	/* Now do addition and subtraction */
 
-	while (tmp != NULL && tmp->next != NULL && tmp->next->op != '?') {	
+	while (tmp != NULL && tmp->next != NULL && tmp->next->op != '?') {
 
 		if (tmp->next->op == '+' || tmp->next->op == '-') {
 		
