@@ -12,10 +12,10 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 	
 	while ((jac->len < MAX) && *jac->buf != '\0') {
 	
-		if (*(jac->buf) == '/' || *(jac->buf) == '*' || *(jac->buf) == '+' || *(jac->buf) == '-') {
+		if (*jac->buf == '/' || *jac->buf == '*' || *jac->buf == '+' || *jac->buf == '-') {
 		
 			if (head != NULL && head->op == '?')
-				head->op = *(jac->buf);		
+				head->op = *jac->buf;		
 
 			incrementBuff(jac,1);
 		}
@@ -25,27 +25,27 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
  			add_item(&head, number);
 			incrementBuff(jac,n);
 			
-			if (*(jac->buf) != '+' && *(jac->buf) != '-' && *(jac->buf) != '/' && *(jac->buf) != '\0') /* A situation like 5( or 5ln*/
+			if (*jac->buf != '+' && *jac->buf != '-' && *jac->buf != '/' && *jac->buf != '\0') /* A situation like 5( or 5ln*/
 				head->op = '*';
 				
 			else {
-				head->op = *(jac->buf);
+				head->op = *jac->buf;
 				incrementBuff(jac,1);
 			}
 		}
 		
-		if ((*(jac->buf) == '(' || *(jac->buf) == '[' || *(jac->buf) == '{')) {
+		if ((*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')) {
 		
 			number = evaluatePar(jac);
 			add_item(&head, number);
 						
 		}
 		
-		else if ((*(jac->buf) == ')' || *(jac->buf) == ']' || *(jac->buf) == '}')) {
+		else if ((*jac->buf == ')' || *jac->buf == ']' || *jac->buf == '}')) {
 		
 			incrementBuff(jac,1);
 			
-			if (isdigit(*(jac->buf)))
+			if (isdigit(*jac->buf))
 				head->op = '*';
 		
 			if (end_char != '\0')
@@ -59,7 +59,7 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 		
 		}
 		
-		if (*(jac->buf) == '^') {
+		if (*jac->buf == '^') {
 		
 			incrementBuff(jac,1);
 			number = evaluateFunc(jac, 'e');
@@ -67,7 +67,7 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 			
 		}
 		
-		if (*(jac->buf) == '!') { /* Factorial */
+		if (*jac->buf == '!') { /* Factorial */
 			
 			head->value = factorial(head->value);
 			incrementBuff(jac,1);
@@ -138,7 +138,7 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 			
 		}
 		
-		else if (*(jac->buf) == 'e') {
+		else if (*jac->buf == 'e') {
 		
 			incrementBuff(jac,2);
 			number = evaluateFunc(jac, 'x');
@@ -300,7 +300,7 @@ long double evaluateFunc (struct control *jac, char op) {
 		return switchFunc(&op, &number);
 	}
 	
-	else if (*(jac->buf) == '(' || *(jac->buf) == '[' || *(jac->buf) == '{') {
+	else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{') {
 			
 		number = evaluatePar(jac);		
 				
