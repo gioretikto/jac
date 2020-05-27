@@ -10,7 +10,7 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 	
 	struct n *head = NULL;
 	
-	while ((jac->len < MAX) && *jac->buf != '\0') {
+	while (jac->len < MAX && *jac->buf != '\0') {
 	
 		if (*jac->buf == '/' || *jac->buf == '*' || *jac->buf == '+' || *jac->buf == '-') {
 		
@@ -92,7 +92,7 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 		
 		else if (strncmp(jac->buf, "tan", 3) == 0) {
 				
-			incrementBuff(jac,4);
+			incrementBuff(jac,3);
 			number = evaluateFunc(jac, 't');
 			add_item(&head, number);
 				
@@ -124,7 +124,7 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 		
 		else if (strncmp(jac->buf, "sqrt", 4) == 0) {
 		
-			incrementBuff(jac,3);
+			incrementBuff(jac,4);
 			number = evaluateFunc(jac, 'r');
 			add_item(&head, number);
 		
@@ -138,7 +138,7 @@ long double parse_evaluate_expr(struct control *jac, char end_char) {
 			
 		}
 		
-		else if (*jac->buf == 'e') {
+		else if (*jac->buf == 'e') { /* e^ increment by 2 */
 		
 			incrementBuff(jac,2);
 			number = evaluateFunc(jac, 'x');
