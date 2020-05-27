@@ -31,7 +31,6 @@ void calculate (struct n *head);
 void delNextNode (struct n *node_pt);
 unsigned long factorial(unsigned long f);
 long double parse_evaluate_expr(struct control *jac);
-long double evaluatePar (struct control *jac);
 bool areParenthesisBalanced(char *exp);
 bool checkSyntax(char *str);
 bool checkPar (struct control *jac, struct n *head);

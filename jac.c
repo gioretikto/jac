@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
 			putchar('\n');
 					
 			printf(">>");
-		}	
+		}
 	}
 
 	return 0;

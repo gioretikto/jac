@@ -37,8 +37,11 @@ long double parse_evaluate_expr(struct control *jac) {
 		if ((*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')) {
 		
 			incrementBuff(jac,1);
-		
-			number = evaluatePar(jac);
+			
+			jac->caller = 1;
+	
+			number = parse_evaluate_expr(jac);   /* Recursive call: evaluate expression inside parenthesis */
+			
 			add_item(&head, number);
 						
 		}
@@ -47,8 +50,10 @@ long double parse_evaluate_expr(struct control *jac) {
 		
 			incrementBuff(jac,1);
 			
-			if (isdigit(*jac->buf))
+			if (isdigit(*jac->buf)) {
 				head->op = '*';
+				break;
+			}
 		
 			if (jac->caller != 0) {
 				jac->caller = 0;
@@ -63,7 +68,7 @@ long double parse_evaluate_expr(struct control *jac) {
 		
 		}
 		
-		if (*jac->buf == '^') {
+		else if (*jac->buf == '^') {
 		
 			incrementBuff(jac,1);
 			number = evaluateFunc(jac, 'e');
@@ -71,7 +76,7 @@ long double parse_evaluate_expr(struct control *jac) {
 			
 		}
 		
-		if (*jac->buf == '!') { /* Factorial */
+		else if (*jac->buf == '!') { /* Factorial */
 			
 			head->value = factorial(head->value);
 			incrementBuff(jac,1);
@@ -221,17 +226,6 @@ long double parse_evaluate_expr(struct control *jac) {
 	return false;
 }
 
-long double evaluatePar (struct control *jac) {
-
-	long double number;
-	
-	jac->caller = 1;
-		
-	number = parse_evaluate_expr(jac);
-	
-	return number;
-}
-
 void add_item(struct n **ptr, long double data)
 {
 	struct n *new_item = malloc(sizeof *new_item);
@@ -306,7 +300,7 @@ long double evaluateFunc (struct control *jac, char op) {
 	
 	else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{') {
 			
-		number = evaluatePar(jac);		
+		number = parse_evaluate_expr(jac);   /* Evaluate expression inside parenthesis */		
 				
 		return switchFunc(&op, &number);
 	}
