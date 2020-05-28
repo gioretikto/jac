@@ -21,7 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>other examples:</p>
 
-<p>4000*ln2 or 4000ln2 = 2772.5887222397811449071</pre>
+<pre>4000*ln2 or 4000ln2 = 2772.5887222397811449071</pre>
 
 <pre>tan(50+1)*3</pre>
 
