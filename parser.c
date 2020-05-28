@@ -69,6 +69,27 @@ long double parse_evaluate_expr(struct control *jac) {
 		
 		}
 		
+		else if (strncmp(jac->buf, "m_p", 3) == 0) {
+		
+			add_item(&head, MP);
+			incrementBuff(jac,3);
+		
+		}
+		
+		else if (strncmp(jac->buf, "c_0", 3) == 0) {
+		
+			add_item(&head, C);
+			incrementBuff(jac,3);
+		
+		}
+		
+		else if (*jac->buf == 'q') {
+		
+			add_item(&head, Q);
+			incrementBuff(jac,1);
+		
+		}
+		
 		else if (*jac->buf == '^') {
 		
 			jac->func = 'e';
@@ -157,7 +178,7 @@ long double parse_evaluate_expr(struct control *jac) {
 			
 		}
 		
-		else if (*jac->buf == 'e') { /* e^ increment by 2 */
+		else if (strncmp(jac->buf, "e^", 2) == 0) { /* e^ increment by 2 */
 		
 			jac->func = 'x';
 			incrementBuff(jac,2);
@@ -165,6 +186,13 @@ long double parse_evaluate_expr(struct control *jac) {
 			add_item(&head, number);
 				
 		}
+		
+		else if (*jac->buf == 'e') {
+		
+			add_item(&head, M_E);
+			incrementBuff(jac,1);
+		
+		}		
 		
 		else if (strncmp(jac->buf, "bin_dec", 7) == 0) {
 		

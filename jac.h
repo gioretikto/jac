@@ -7,8 +7,18 @@
 
 #define MAX 1000
 
+#define C 299792458 	/* Speed of light (m/s)*/
+#define Q 1.602176634e-19  /* elementary charge */
+#define H 6.626192e-27    /* Planck's constant*/
+#define ME 9.1093837015e-31 /* electron mass */
+#define MP 1.6726219236951e-27 /* proton mass */
+
 #ifndef M_PIl
 #define M_PIl 3.141592653589793238462643383279502884L
+#endif
+
+#ifndef M_E
+#define M_E 2.71828182845904523536
 #endif
 
 struct node{

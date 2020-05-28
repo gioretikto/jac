@@ -39,18 +39,14 @@ long long dec_bin(int n) {
 
 void print_result(long double x) {
 
-    long double i;
-    long double tmp = ceil(x);
-    
-    if (fabs(x-tmp) < 0.00000001)
-    	x = tmp;
-    
-    long double r = modfl(x, &i);
-    
-    if (fabs(r) <.00001)
-        printf("%.Lf ", i);
-    
-    else printf("%.19Lf ", x);
+ 	long double tmp = ceil(x);
+
+    if (fabs(x-tmp) < 0.00000000001) {
+        x = tmp;
+    }    
+
+	printf("%.19Lg\n", x);
+
 }
 
 void remove_spaces(char *str) {

@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 	jac.caller = 0;
 	
 	if (argc == 1)
-		printf("Enter q to quit\n>>");
+		printf("Enter l to quit\n>>");
 		
 	if (argc > 1) {
 	
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 	
 	for (;;) {
 	
-		if (fgets(jac.buf = line, MAX, stdin) == NULL || *buf == 'q')
+		if (fgets(jac.buf = line, MAX, stdin) == NULL || *buf == 'l')
 			break;
 			
 		if (!areParenthesisBalanced(line))
@@ -69,8 +69,6 @@ int main(int argc, char* argv[]) {
 			
 			print_result(parse_evaluate_expr(&jac));
 			
-			putchar('\n');
-					
 			printf(">>");
 		}
 	}
