@@ -37,11 +37,6 @@ long double parse_evaluate_expr(struct control *jac) {
 			
 			if (*jac->buf != '\0' && *jac->buf != '+' && *jac->buf != '-' && *jac->buf != '/') /* A situation like 5( or 5ln */
 				head->op = '*';
-				
-			else {
-				head->op = *jac->buf;
-				incrementBuff(jac,1);
-			}
 		}
 		
 		if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{') {
