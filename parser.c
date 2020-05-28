@@ -8,24 +8,34 @@ long double parse_evaluate_expr(struct control *jac) {
 	
 	unsigned int n = 0;
 	
-	struct n *head = NULL;
+	struct node *head = NULL;
 	
 	while (jac->len < MAX && *jac->buf != '\0') {
 	
 		if (*jac->buf == '/' || *jac->buf == '*' || *jac->buf == '+' || *jac->buf == '-') {
 		
-			if (head != NULL && head->op == '?')
-				head->op = *jac->buf;		
+			if (head != NULL && head->op == '?') 		/* A situation like (5+6)+5 or ln2+5 */
+				head->op = *jac->buf;
+			
+			if (head == NULL && *jac->buf == '-')
+			{
+				add_item(&head, -1);
+				head->op = '*';
+			}
 
 			incrementBuff(jac,1);
 		}
 	
 		if (1 == sscanf(jac->buf, "%Lf%n", &number, &n)) {
 		
+			if (head != NULL && head->op == '?')
+				if (jac->buf[-1] == ')' || jac->buf[-1] == ']' || jac->buf[-1] == '}')	/* A situation like (..)5*/
+					head->op = '*';
+		
  			add_item(&head, number);
 			incrementBuff(jac,n);
 			
-			if (*jac->buf != '+' && *jac->buf != '-' && *jac->buf != '/' && *jac->buf != '\0') /* A situation like 5( or 5ln*/
+			if (*jac->buf != '\0' && *jac->buf != '+' && *jac->buf != '-' && *jac->buf != '/') /* A situation like 5( or 5ln */
 				head->op = '*';
 				
 			else {
@@ -34,11 +44,11 @@ long double parse_evaluate_expr(struct control *jac) {
 			}
 		}
 		
-		if ((*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')) {
+		if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{') {
 		
 			incrementBuff(jac,1);
 			
-			jac->caller = 1;
+			jac->caller = 1;	/* indicates recursive call */
 	
 			number = parse_evaluate_expr(jac);   /* Recursive call: evaluate expression inside parenthesis */
 			
@@ -46,16 +56,12 @@ long double parse_evaluate_expr(struct control *jac) {
 						
 		}
 		
-		else if ((*jac->buf == ')' || *jac->buf == ']' || *jac->buf == '}')) {
+		else if (*jac->buf == ')' || *jac->buf == ']' || *jac->buf == '}') {
 		
 			incrementBuff(jac,1);
-			
-			if (isdigit(*jac->buf)) {
-				head->op = '*';
-				break;
-			}
-		
-			if (jac->caller != 0) {
+
+			if (jac->caller != 0)
+			{
 				jac->caller = 0;
 				break;
 			}
@@ -70,8 +76,10 @@ long double parse_evaluate_expr(struct control *jac) {
 		
 		else if (*jac->buf == '^') {
 		
+			jac->func = 'e';
+		
 			incrementBuff(jac,1);
-			number = evaluateFunc(jac, 'e');
+			number = evaluateFunc(jac);
 			head->value = pow(head->value, number);
 			
 		}
@@ -85,96 +93,107 @@ long double parse_evaluate_expr(struct control *jac) {
 		
 		else if (strncmp(jac->buf, "cos", 3) == 0) {
 		
+			jac->func = 'c';
 			incrementBuff(jac,3);
-			number = evaluateFunc(jac, 'c');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 				
 		}
 		
 		else if (strncmp(jac->buf, "sin", 3) == 0) {
 		
+			jac->func = 's';
 			incrementBuff(jac,3);
-			number = evaluateFunc(jac, 's');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 				
 		}
 		
 		else if (strncmp(jac->buf, "tan", 3) == 0) {
-				
+		
+			jac->func = 't';
 			incrementBuff(jac,3);
-			number = evaluateFunc(jac, 't');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 				
 		}
 		 
 		else if (strncmp(jac->buf, "atan", 4) == 0) {
-				
+		
+			jac->func = 'a';
 			incrementBuff(jac,4);
-			number = evaluateFunc(jac, 'a');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 				
 		}
 		
 		else if (strncmp(jac->buf, "acos", 4) == 0) {
-				
+		
+			jac->func = 'o';
 			incrementBuff(jac,4);
-			number = evaluateFunc(jac, 'o');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 				
 		}		   
 
 		else if (strncmp(jac->buf, "log", 3) == 0) {
 		
+			jac->func = 'g';
 			incrementBuff(jac,3);
-			number = evaluateFunc(jac, 'g');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 		
 		}
 		
 		else if (strncmp(jac->buf, "sqrt", 4) == 0) {
 		
+			jac->func = 'r';
 			incrementBuff(jac,4);
-			number = evaluateFunc(jac, 'r');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 		
 		}
 		 		 
 		else if (strncmp(jac->buf, "ln", 2) == 0) {
-			
+			jac->func = 'l';
 			incrementBuff(jac,2);
-			number = evaluateFunc(jac, 'l');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 			
 		}
 		
 		else if (*jac->buf == 'e') { /* e^ increment by 2 */
 		
+			jac->func = 'x';
 			incrementBuff(jac,2);
-			number = evaluateFunc(jac, 'x');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 				
 		}
 		
 		else if (strncmp(jac->buf, "bin_dec", 7) == 0) {
 		
+			jac->func = 'b';
 			incrementBuff(jac,7);
-			number = evaluateFunc(jac, 'b');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 		
 		}
 		
 		else if (strncmp(jac->buf, "dec_bin", 7) == 0) {
 		
+			jac->func = 'd';
 			incrementBuff(jac,7);
-			number = evaluateFunc(jac, 'd');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 		
 		}
 		
 		else if (strncmp(jac->buf, "asin", 4) == 0) {
 		
+			jac->func = 'i';
 			incrementBuff(jac,4);
-			number = evaluateFunc(jac, 'i');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 			
 		}
@@ -182,8 +201,9 @@ long double parse_evaluate_expr(struct control *jac) {
 				
 		else if (strncmp(jac->buf, "cbrt", 4) == 0) {
 		
+			jac->func = 'u';
 			incrementBuff(jac,4);
-			number = evaluateFunc(jac, 'u');
+			number = evaluateFunc(jac);
 			add_item(&head, number);
 			
 		}
@@ -226,9 +246,9 @@ long double parse_evaluate_expr(struct control *jac) {
 	return false;
 }
 
-void add_item(struct n **ptr, long double data)
+void add_item(struct node **ptr, long double data)
 {
-	struct n *new_item = malloc(sizeof *new_item);
+	struct node *new_item = malloc(sizeof *new_item);
      
 	new_item->value = data;
     new_item->next = *ptr;
@@ -236,9 +256,9 @@ void add_item(struct n **ptr, long double data)
     *ptr = new_item;
 }
 
-void calculate (struct n *head) {
+void calculate (struct node *head) {
 
-	struct n *tmp = head;
+	struct node *tmp = head;
 
 	/* Multiply and divide first */
 
@@ -281,28 +301,28 @@ void calculate (struct n *head) {
 	}
 }
 
-void delNextNode (struct n *head) {
+void delNextNode (struct node *head) {
 
-	struct n *tmp = head->next;
+	struct node *tmp = head->next;
 	head->next = head->next->next;
 	free(tmp);
 }
 
-long double evaluateFunc (struct control *jac, char op) {
+long double evaluateFunc (struct control *jac) {
 
 	long double number;
 	unsigned int n = 0;
 		
     if (1 == sscanf(jac->buf, "%Lf%n", &number, &n)) {
     	incrementBuff(jac,n);
-		return switchFunc(&op, &number);
+		return switchFunc(&jac->func, &number);
 	}
 	
 	else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{') {
 			
 		number = parse_evaluate_expr(jac);   /* Evaluate expression inside parenthesis */		
 				
-		return switchFunc(&op, &number);
+		return switchFunc(&jac->func, &number);
 	}
 			
 	else

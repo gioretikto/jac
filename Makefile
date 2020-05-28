@@ -7,7 +7,7 @@ ifeq ($(SYSTEM), SunOS)
 endif
 
 LDFLAGS = -lm
-OBJFILES = jac.o functions.o parser.o syntax.o
+OBJFILES = main.o functions.o parser.o syntax.o
 TARGET = jac
 
 all: $(TARGET)
