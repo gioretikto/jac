@@ -92,6 +92,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 -1
 </pre>
 
+## Get Source and Build
+
+```
+git clone https://github.com/gioretikto/jac.git
+cd jac
+make
+```
+
 <h3>Contacts</h3>
 
 <p>All the best,

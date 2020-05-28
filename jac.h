@@ -20,10 +20,6 @@
 #define M_PIl 3.141592653589793238462643383279502884L
 #endif
 
-#ifndef M_E
-#define M_E 2.71828182845904523536
-#endif
-
 struct node{
 	long double value;
 	char op;

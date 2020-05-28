@@ -250,15 +250,8 @@ long double parse_evaluate_expr(struct control *jac) {
 			add_item(&head, M_PIl);
 			incrementBuff(jac,2);
 		
-		}
-		
-		else if (*jac->buf == 'e') {
-		
-			add_item(&head, M_E);
-			incrementBuff(jac,1);
-		
-		}
-		
+		}		
+
 		else if (*jac->buf == 'k') { 	/* Boltzmann's constant */
 		
 			add_item(&head, K_B);
