@@ -13,7 +13,7 @@ void push(struct charNode** top_ref, int new_data);
 
 int pop(struct charNode** top_ref);
 
-bool isMatchingPair(char character1, char character2)
+bool isMatchingPar(char character1, char character2)
 {
 
    if (character1 == '(' && character2 == ')')
@@ -49,7 +49,7 @@ bool areParenthesisBalanced(char *buf)
          if (stack == NULL)
            return 0;
 
-         else if ( !isMatchingPair(pop(&stack), buf[i]))
+         else if ( !isMatchingPar(pop(&stack), buf[i]))
            return 0;
       }
 
