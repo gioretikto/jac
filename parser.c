@@ -62,30 +62,37 @@ long double parse_evaluate_expr(struct control *jac) {
 			}
 		}
 		
-		else if (strncmp(jac->buf, "pi", 2) == 0) {
+		else if (strncmp(jac->buf, "m_p", 3) == 0) {		/* Proton Mass */
 		
-			add_item(&head, M_PIl);
-			incrementBuff(jac,2);
-		
-		}
-		
-		else if (strncmp(jac->buf, "m_p", 3) == 0) {
-		
-			add_item(&head, MP);
+			add_item(&head, PROTON_MASS);
 			incrementBuff(jac,3);
 		
 		}
 		
-		else if (strncmp(jac->buf, "c_0", 3) == 0) {
+		else if (strncmp(jac->buf, "m_e", 3) == 0) {		/* Electron mass */
 		
-			add_item(&head, C);
+			add_item(&head, ELECTRON_MASS);
 			incrementBuff(jac,3);
 		
 		}
 		
-		else if (*jac->buf == 'q') {
+		else if (strncmp(jac->buf, "c_0", 3) == 0) { 		/* Speed of light in vacuum m/s (exact) */
 		
-			add_item(&head, Q);
+			add_item(&head, SPEED_LIGHT);
+			incrementBuff(jac,3);
+		
+		}
+		
+		else if (*jac->buf == 'q') { 						/* elementary charge*/
+		
+			add_item(&head, CHARGE);
+			incrementBuff(jac,1);
+		
+		}
+		
+		else if (*jac->buf == 'h') { 						/* Plank's constant*/
+		
+			add_item(&head, PLANK);
 			incrementBuff(jac,1);
 		
 		}
@@ -178,21 +185,29 @@ long double parse_evaluate_expr(struct control *jac) {
 			
 		}
 		
-		else if (strncmp(jac->buf, "e^", 2) == 0) { /* e^ increment by 2 */
+		else if (strncmp(jac->buf, "e^", 2) == 0) {
 		
 			jac->func = 'x';
 			incrementBuff(jac,2);
 			number = evaluateFunc(jac);
 			add_item(&head, number);
 				
+		}	
+
+		
+		else if (strncmp(jac->buf, "e_0", 3) == 0) {  /* Permittivity of free space */
+		
+			add_item(&head, E_0);
+			incrementBuff(jac,3);
+				
 		}
 		
-		else if (*jac->buf == 'e') {
+		else if (strncmp(jac->buf, "n_a", 3) == 0) {  /* Avogadros's number */
 		
-			add_item(&head, M_E);
-			incrementBuff(jac,1);
-		
-		}		
+			add_item(&head, AVOGADRO);
+			incrementBuff(jac,3);
+				
+		}	
 		
 		else if (strncmp(jac->buf, "bin_dec", 7) == 0) {
 		
@@ -219,8 +234,7 @@ long double parse_evaluate_expr(struct control *jac) {
 			number = evaluateFunc(jac);
 			add_item(&head, number);
 			
-		}
-		
+		}		
 				
 		else if (strncmp(jac->buf, "cbrt", 4) == 0) {
 		
@@ -229,6 +243,34 @@ long double parse_evaluate_expr(struct control *jac) {
 			number = evaluateFunc(jac);
 			add_item(&head, number);
 			
+		}
+		
+		else if (strncmp(jac->buf, "pi", 2) == 0) {
+		
+			add_item(&head, M_PIl);
+			incrementBuff(jac,2);
+		
+		}
+		
+		else if (*jac->buf == 'e') {
+		
+			add_item(&head, M_E);
+			incrementBuff(jac,1);
+		
+		}
+		
+		else if (*jac->buf == 'k') { 	/* Boltzmann's constant */
+		
+			add_item(&head, K_B);
+			incrementBuff(jac,1);
+		
+		}
+		
+		else if (isalpha(*jac->buf)) {	/* Syntax error */
+		
+			fprintf(stderr,"Illegal character %s\n", jac->buf);
+			return 0;
+		
 		}
 		
 		else

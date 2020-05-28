@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 	jac.caller = 0;
 	
 	if (argc == 1)
-		printf("Enter l to quit\n>>");
+		printf("Enter x to quit\n>>");
 		
 	if (argc > 1) {
 	
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 	
 	for (;;) {
 	
-		if (fgets(jac.buf = line, MAX, stdin) == NULL || *buf == 'l')
+		if (fgets(jac.buf = line, MAX, stdin) == NULL || *buf == 'x')
 			break;
 			
 		if (!areParenthesisBalanced(line))

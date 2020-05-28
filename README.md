@@ -15,7 +15,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <h2>USAGE</h2>
 
-<p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one) able to perform calculation such as:</p>
+<p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one). jac is particularly suitable for scientifical calculations. For example the rest energy of the electron is</p>
+
+<pre>m_e * m_0 = 8.187105776823886314e-14</pre>
+
+<p>other examples:</p>
 
 <p>4000*ln2 or 4000ln2 = 2772.5887222397811449071</pre>
 
@@ -67,6 +71,22 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 <h2>Constants</h2>
 
 - pi = 3.14159265358979323846
+
+- c_0 = 2.99792458e8 m/s (exact)	Speed of light in vacuum
+
+- q = 1.602176634e-19 				C elementary charge
+
+- h = 6.62606896e-34    			Planck's constant j⋅s
+
+- m_e = 9.1093837015e-31 			Electron mass kg
+
+- m_p = 1.6726219236951e-27 		Proton mass kg
+
+- e_0 = 8.854187817e-12    			Permittivity of free space (exact)  ^2/N⋅m^2
+
+- n_a = 6.02214179e23				Avogadros's number particles/mol
+
+- k = 1.3806504e-23					Boltzmann's constant j/K
 
 <pre>>>cos(pi)
 -1

@@ -123,21 +123,21 @@ bool checkSyntax(char *str) {
 	if (!(isdigit(*str)) && !(isalpha(*str)) && *str !='(' && *str !='['
 	  && *str != '-' && *str != '+' && *str != '{' && *str !=')' && *str !=']' && *str !='}') {
 	  
-		fprintf(stderr,"%s%c\n","Syntax error: Expression starting with ",*str);
+		fprintf(stderr,"%s%c\n","Syntax error: Expression starting with illegal character ",*str);
 		return false;
 		
 	}
 	
 	while (*str != '\0') {
 	
-		if (*str == str[1] && !(isdigit(*str)) && *str !='(' && *str !='[' && *str != '{' && *str !=')' && *str !=']' && *str !='}') {
+		if (*str == str[1] && !isdigit(*str) && *str !='(' && *str !='[' && *str != '{' && *str !=')' && *str !=']' && *str !='}') {
 		
 			fprintf(stderr,"%s%c %c\n","Syntax error: Invalid sequence ",*str, *str);
 			return false;
-			
+
 		}
 		
-		if ((*str >= 58 && *str <=64) || (*str > 33 && *str <=39) || *str==',' ) {
+		if ((*str >= 58 && *str <=64) || (*str > 33 && *str <=39) || *str== ',' ) {
 		
 			fprintf(stderr,"%s: %c\n","Syntax error: Invalid symbol",*str);
 			return false;
@@ -149,4 +149,5 @@ bool checkSyntax(char *str) {
 	}
 	
 	return true;
+
 }
