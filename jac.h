@@ -31,7 +31,6 @@ struct control{
 	char *buf;
 	int len;
 	bool caller;
-	char func;
 	bool failure;
 };
 
@@ -45,7 +44,7 @@ long double parse_evaluate_expr(struct control *jac);
 bool areParenthesisBalanced(char *exp);
 bool checkSyntax(char *str);
 bool checkPar (struct control *jac, struct node *head);
-long double evaluateFunc (struct control *jac);
+long double evaluateFunc (struct control *jac, char func);
 long double switchFunc(char *op, long double *number);
 void incrementBuff (struct control *jac, int n);
 int bin_dec(long long n);

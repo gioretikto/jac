@@ -29,7 +29,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <pre>4000*ln2 or 4000ln2 = 2772.5887222397811449071</pre>
 
-<pre>tan(50+1)*3</pre>
+<pre>tan(50+1)*3 = 2.709258448126293239</pre>
 
 <p>or</p>
 
