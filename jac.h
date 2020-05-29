@@ -32,6 +32,7 @@ struct control{
 	int len;
 	bool caller;
 	char func;
+	bool failure;
 };
 
 void add_item(struct node **head, long double data);

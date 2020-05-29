@@ -19,6 +19,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <pre>m_e * m_0 = 8.187105776823886314e-14</pre>
 
+<p>You can use scientific notation "e"</p>
+
+<pre>h* 2.5e5 =
+1.6565172e-28
+</pre>
+
 <p>other examples:</p>
 
 <pre>4000*ln2 or 4000ln2 = 2772.5887222397811449071</pre>
@@ -67,6 +73,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 	- bin_dec(x) Conversion of binary x to decimal
 	
 	- dec_bin(x) Conversion of decimal x to binary
+	
+	-abs(x) absolute value of x
 	
 <h2>Constants</h2>
 

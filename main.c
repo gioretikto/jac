@@ -1,3 +1,5 @@
+/* jac v.1.3 - Giovanni Resta 29/05/2020 */
+
 #include "jac.h"
 
 int main(int argc, char* argv[]) {
@@ -8,10 +10,13 @@ int main(int argc, char* argv[]) {
 
 	int i;
 	
+	long double result;
+	
 	struct control jac;
 	
 	jac.len = 0;
-	jac.caller = 0;
+	jac.caller = false;
+	jac.failure = false;
 	
 	if (argc == 1)
 		printf("Enter x to quit\n>>");
@@ -42,7 +47,10 @@ int main(int argc, char* argv[]) {
 							
 			remove_spaces(jac.buf);
 			
-			print_result(parse_evaluate_expr(&jac));
+			result = parse_evaluate_expr(&jac);
+			
+			if (jac.failure == false)
+				print_result(result);				
 		}
 		
 		return 0;
@@ -67,8 +75,12 @@ int main(int argc, char* argv[]) {
 		{        	
 			remove_spaces(jac.buf);
 			
-			print_result(parse_evaluate_expr(&jac));
+			result = parse_evaluate_expr(&jac);
 			
+			if (jac.failure == false)
+				print_result(result);
+			
+			jac.failure = false;
 			printf(">>");
 		}
 	}

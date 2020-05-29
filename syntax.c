@@ -120,32 +120,44 @@ int pop(struct charNode** top_ref)
 
 bool checkSyntax(char *str) {
 
-	if (!(isdigit(*str)) && !(isalpha(*str)) && *str !='(' && *str !='['
-	  && *str != '-' && *str != '+' && *str != '{' && *str !=')' && *str !=']' && *str !='}') {
-	  
+	if (*str == 'x')
+		return false;
+		
+	else if (!(isdigit(*str)) && !(isalpha(*str)) && *str !='(' && *str !='[' && *str != '-'
+	 && *str != '+' && *str != '{' && *str !=')' && *str !=']' && *str !='}' && *str !='|')
+	{	  
 		fprintf(stderr,"%s%c\n","Syntax error: Expression starting with illegal character ",*str);
 		return false;
 		
 	}
 	
-	while (*str != '\0') {
-	
-		if (*str == str[1] && !isdigit(*str) && *str !='(' && *str !='[' && *str != '{' && *str !=')' && *str !=']' && *str !='}') {
+	else
+	{	
+		while (*str != '\0')
+		{	
+			/*characters that are not part of the syntax */	
+			if (*str =='j' || *str =='f' || *str =='u' || *str =='v' || *str =='y' || *str =='w' || *str =='x')
+			{
+				fprintf(stderr,"%s%c\n","Syntax error: Invalid character ",*str);
+				return false;			
+			}
 		
-			fprintf(stderr,"%s%c %c\n","Syntax error: Invalid sequence ",*str, *str);
-			return false;
-
-		}
-		
-		if ((*str >= 58 && *str <=64) || (*str > 33 && *str <=39) || *str== ',' ) {
-		
-			fprintf(stderr,"%s: %c\n","Syntax error: Invalid symbol",*str);
-			return false;
+			else if (*str == str[1] && !isdigit(*str) && *str !='(' && *str !='[' && *str != '{'
+					 && *str !=')' && *str !=']' && *str !='}' && *str != '|')
+			{
+				fprintf(stderr,"%s%c %c\n","Syntax error: Invalid sequence ",*str, *str);
+				return false;
+			}
 			
-		}
-		
-		str++;
+			else if ((*str >= 58 && *str <=64) || (*str > 33 && *str <=39) || *str== ',' )
+			{			
+				fprintf(stderr,"%s: %c\n","Syntax error: Invalid symbol",*str);
+				return false;				
+			}
 			
+			else
+				str++;			
+		}
 	}
 	
 	return true;
