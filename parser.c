@@ -27,7 +27,7 @@ long double parse_evaluate_expr(struct control *jac) {
 		}
 	
 		if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
-		{	
+		{
  			add_item(&head, number);
 			incrementBuff(jac,n);
 		}
@@ -91,6 +91,15 @@ long double parse_evaluate_expr(struct control *jac) {
 			incrementBuff(jac,1);
 			number = evaluateFunc(jac, func);
 			head->value = pow(head->value, number);
+		}
+		
+		else if (*jac->buf == '%')
+		{
+			func = 'm';
+		
+			incrementBuff(jac,1);
+			number = evaluateFunc(jac, func);
+			head->value = fmodl(head->value, number);
 		}
 		
 		else if (*jac->buf == '!') 	/* Factorial */
@@ -177,9 +186,8 @@ long double parse_evaluate_expr(struct control *jac) {
 			incrementBuff(jac,3);
 		}
 		
-		else if (*jac->buf == 'e')
+		else if (*jac->buf == 'E')
 		{
-			func = 'e';
 			add_item(&head, 10);
 			incrementBuff(jac,1);
 			
@@ -191,6 +199,12 @@ long double parse_evaluate_expr(struct control *jac) {
 			
 			else
 				jac->failure = true;
+		}
+		
+		else if (*jac->buf == 'e')
+		{
+			add_item(&head, M_E);
+			incrementBuff(jac,1);
 		}
 		
 		else if (strncmp(jac->buf, "n_a", 3) == 0)  /* Avogadros's number */
@@ -423,6 +437,10 @@ long double switchFunc(char *op, long double *number)
     	case 'l':
 	    	return log(*number);
 	    	break;
+	    	
+	    case 'm':
+			return *number;
+			break;
 	    	
 	   	case 'o':
 	    	return acos(*number);

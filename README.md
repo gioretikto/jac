@@ -1,9 +1,7 @@
-<h1>JAC 1.3 - Just Another Calculator</h1>
+<h1>JAC 1.3 - Scientific Calculator</h1>
 
-<p>This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
+<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
 
 <p>This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,14 +13,16 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <h2>USAGE</h2>
 
-<p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one). jac is particularly suitable for scientifical calculations. For example the rest energy of the electron is</p>
+<p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one). JAC is the acronym of "Just Another Calculator" and it is particularly suitable for scientifical calculations. Examples of usage of jac are</p>
+
+<p>Evaluation of the rest energy of the electron</p>
 
 <pre>m_e * m_0 = 8.187105776823886314e-14</pre>
 
-<p>You can use scientific notation "e"</p>
+<p>You can use scientific notation by using the capital "E", since "e" indicates Euler's number.</p>
 
-<pre>h* 2.5e5 =
-1.6565172e-28
+<pre>h* 2.5E5 =
+1.6565172E-28
 </pre>
 
 <p>other examples:</p>

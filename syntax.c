@@ -2,7 +2,6 @@
 
 struct charNode
 {
-
    char data;
 
    struct charNode *next;
@@ -31,21 +30,17 @@ bool isMatchingPar(char character1, char character2)
 
 bool areParenthesisBalanced(char *buf)
 {
-
    int i = 0;
 
    struct charNode *stack = NULL;
 
    while (buf[i])
    {
-
       if (buf[i] == '{' || buf[i] == '(' || buf[i] == '[')
 	  	push(&stack, buf[i]);
 
       if (buf[i] == '}' || buf[i] == ')' || buf[i] == ']')
-
       {
-
          if (stack == NULL)
            return 0;
 
@@ -54,7 +49,6 @@ bool areParenthesisBalanced(char *buf)
       }
 
       i++;
-
    }
 
    if (stack == NULL)
@@ -67,7 +61,6 @@ bool areParenthesisBalanced(char *buf)
 
 void push(struct charNode** top_ref, int new_data)
 {
-
 	struct charNode* new_node = (struct charNode*)malloc(sizeof(struct charNode));
 
 	if (new_node == NULL)  
@@ -78,19 +71,17 @@ void push(struct charNode** top_ref, int new_data)
 
 		exit(0);
 
-	}           
+	}
 
 	new_node->data  = new_data;
 
-	new_node->next = (*top_ref); 
+	new_node->next = (*top_ref);
 
 	(*top_ref) = new_node;
-
 }
 
 int pop(struct charNode** top_ref)
 {
-
   char res;
 
   struct charNode *top;
@@ -127,14 +118,13 @@ bool checkSyntax(char *str) {
 	 && *str != '+' && *str != '{' && *str !=')' && *str !=']' && *str !='}' && *str !='|')
 	{	  
 		fprintf(stderr,"%s%c\n","Syntax error: Expression starting with illegal character ",*str);
-		return false;
-		
+		return false;		
 	}
 	
 	else
-	{	
+	{
 		while (*str != '\0')
-		{	
+		{
 			/*characters that are not part of the syntax */	
 			if (*str =='j' || *str =='f' || *str =='u' || *str =='v' || *str =='y' || *str =='w' || *str =='x')
 			{
@@ -149,8 +139,8 @@ bool checkSyntax(char *str) {
 				return false;
 			}
 			
-			else if ((*str >= 58 && *str <=64) || (*str > 33 && *str <=39) || *str== ',' )
-			{			
+			else if ((*str >= 58 && *str <=64) || (*str > 33 && *str <=36) || *str== ',' )
+			{	
 				fprintf(stderr,"%s: %c\n","Syntax error: Invalid symbol",*str);
 				return false;				
 			}

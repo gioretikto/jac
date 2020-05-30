@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 			break;
 			
 		if (!areParenthesisBalanced(line))
-		{		
+		{
 			fprintf(stderr,"%s\n","Syntax error: Mismatched parenthesis");
 			
 			printf(">>");
