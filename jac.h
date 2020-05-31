@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -23,6 +22,8 @@
 #ifndef M_E
 #define M_E 2.71828182845904523536028747135266249775L
 #endif
+
+enum functions {SIN, COS, TAN, ASIN, ACOS, ATAN, EXP, LOG, LN, SQRT, ABS, MOD, CBRT, BIN_DEC, DEC_BIN};
 
 struct node{
 	long double value;
@@ -48,8 +49,8 @@ long double parse_evaluate_expr(struct control *jac);
 bool areParenthesisBalanced(char *exp);
 bool checkSyntax(char *str);
 bool checkPar (struct control *jac, struct node *head);
-long double evaluateFunc (struct control *jac, char func);
-long double switchFunc(char *op, long double *number);
+long double evaluateFunc (struct control *jac, enum functions func);
+long double switchFunc(enum functions *func, long double *number);
 void incrementBuff (struct control *jac, int n);
 int bin_dec(long long n);
 long long dec_bin(int n);

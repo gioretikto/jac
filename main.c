@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 			strcat(line, argv[i]);
 		
 		if (!areParenthesisBalanced(line))
-		{		
+		{
 			fprintf(stderr,"%s\n","Syntax error: Mismatched parenthesis");
 			
 			return 0;
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 			printf(">>");
 		
 		else
-		{        	
+		{
 			remove_spaces(jac.buf);
 			
 			result = parse_evaluate_expr(&jac);

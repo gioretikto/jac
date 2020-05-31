@@ -1,9 +1,11 @@
 #include "jac.h"
+#include <math.h>
 
 unsigned long factorial(unsigned long f) {
 
-    if ( f == 0 ) 
+    if (f == 0) 
         return 1;
+        
     return(f * factorial(f - 1));
 }
 
@@ -27,7 +29,8 @@ long long dec_bin(int n) {
     
     rem = i = 1;
     
-    while (n != 0) {
+    while (n != 0)
+    {
         rem = n % 2;
         n /= 2;
         bin += rem * i;
@@ -39,20 +42,24 @@ long long dec_bin(int n) {
 
 void print_result(long double x) {
 
- 	long double tmp = ceil(x);
+ 	long double tmp = ceill(x);
 
-    if (fabs(x-tmp) < 0.00000000001) {
+    if (fabsl(x-tmp) < 0.00000000001)
+    {
         x = tmp;
-    }    
-
+	}
+	
+	if (x == -0)
+		x = fabsl(x);
+	
 	printf("%.19Lg\n", x);
 
 }
 
 void remove_spaces(char *str) {
 
-    int count = 0;
-  	int i;
+    unsigned int count = 0;
+  	unsigned int i;
     for (i = 0; str[i]; i++)
         if (str[i] != ' ' && str[i] != '\n')
             str[count++] = str[i];

@@ -1,4 +1,5 @@
 #include "jac.h"
+#include <math.h>
 
 long double parse_evaluate_expr(struct control *jac) {
 
@@ -54,31 +55,31 @@ long double parse_evaluate_expr(struct control *jac) {
 			}
 		}
 		
-		else if (strncmp(jac->buf, "m_p", 3) == 0) 	/* Proton Mass */
+		else if (strncmp(jac->buf, "m_p", 3) == 0) 		/* Proton Mass */
 		{
 			add_item(&head, PROTON_MASS);
 			incrementBuff(jac,3);
 		}
 		
-		else if (strncmp(jac->buf, "m_e", 3) == 0) /* Electron mass */
+		else if (strncmp(jac->buf, "m_e", 3) == 0) 		/* Electron mass */
 		{
 			add_item(&head, ELECTRON_MASS);
 			incrementBuff(jac,3);
 		}
 		
-		else if (strncmp(jac->buf, "c_0", 3) == 0)  		/* Speed of light in vacuum m/s (exact) */
+		else if (strncmp(jac->buf, "c_0", 3) == 0)  	/* Speed of light in vacuum m/s (exact) */
 		{
 			add_item(&head, SPEED_LIGHT);
 			incrementBuff(jac,3);
 		}
 		
-		else if (*jac->buf == 'q')		/* elementary charge*/
+		else if (*jac->buf == 'q')						/* elementary charge*/
 		{
 			add_item(&head, CHARGE);
 			incrementBuff(jac,1);		
 		}
 		
-		else if (*jac->buf == 'h')		/* Plank's constant*/
+		else if (*jac->buf == 'h')						/* Plank's constant*/
 		{
 			add_item(&head, PLANK);
 			incrementBuff(jac,1);
@@ -86,19 +87,15 @@ long double parse_evaluate_expr(struct control *jac) {
 		
 		else if (*jac->buf == '^')
 		{
-			func = 'e';
-		
 			incrementBuff(jac,1);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, EXP);
 			head->value = pow(head->value, number);
 		}
 		
 		else if (*jac->buf == '%')
 		{
-			func = 'm';
-		
 			incrementBuff(jac,1);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, MOD);
 			head->value = fmodl(head->value, number);
 		}
 		
@@ -110,77 +107,61 @@ long double parse_evaluate_expr(struct control *jac) {
 		
 		else if (strncmp(jac->buf, "cos", 3) == 0)
 		{
-			func = 'c';
 			incrementBuff(jac,3);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, COS);
 			add_item(&head, number);
 		}
 		
 		else if (strncmp(jac->buf, "sin", 3) == 0)
 		{
-			func = 's';
 			incrementBuff(jac,3);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, SIN);
 			add_item(&head, number);
 		}
 		
 		else if (strncmp(jac->buf, "tan", 3) == 0)
 		{
-			func = 't';
 			incrementBuff(jac,3);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, TAN);
 			add_item(&head, number);
 		}
 		 
 		else if (strncmp(jac->buf, "atan", 4) == 0)
 		{
-			func = 'a';
 			incrementBuff(jac,4);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, ATAN);
 			add_item(&head, number);
 		}
 		
 		else if (strncmp(jac->buf, "acos", 4) == 0)
 		{
-			func = 'o';
 			incrementBuff(jac,4);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, ACOS);
 			add_item(&head, number);			
 		}
 
 		else if (strncmp(jac->buf, "log", 3) == 0)
 		{
-			func = 'g';
 			incrementBuff(jac,3);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, LOG);
 			add_item(&head, number);
 		}
 		
 		else if (strncmp(jac->buf, "sqrt", 4) == 0)
 		{
-			func = 'r';
 			incrementBuff(jac,4);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, SQRT);
 			add_item(&head, number);
 		}
 		 		 
 		else if (strncmp(jac->buf, "ln", 2) == 0)
 		{
-			func = 'l';
 			incrementBuff(jac,2);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, LN);
 			add_item(&head, number);		
 		}
 		
-		else if (strncmp(jac->buf, "e^", 2) == 0)
-		{
-			func = 'x';
-			incrementBuff(jac,2);
-			number = evaluateFunc(jac, func);
-			add_item(&head, number);
-		}
-		
-		else if (strncmp(jac->buf, "e_0", 3) == 0) /* Permittivity of free space */
+		else if (strncmp(jac->buf, "e_0", 3) == 0) 		/* Permittivity of free space */
 		{
 			add_item(&head, E_0);
 			incrementBuff(jac,3);
@@ -210,22 +191,20 @@ long double parse_evaluate_expr(struct control *jac) {
 		else if (strncmp(jac->buf, "n_a", 3) == 0)  /* Avogadros's number */
 		{
 			add_item(&head, AVOGADRO);
-			incrementBuff(jac,3);		
+			incrementBuff(jac,3);
 		}
 		
 		else if (strncmp(jac->buf, "bin_dec", 7) == 0)
 		{
-			func = 'b';
 			incrementBuff(jac,7);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, BIN_DEC);
 			add_item(&head, number);
 		}
 		
 		else if (strncmp(jac->buf, "dec_bin", 7) == 0)
 		{
-			func = 'd';
 			incrementBuff(jac,7);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, DEC_BIN);
 			add_item(&head, number);
 		}
 		
@@ -239,9 +218,8 @@ long double parse_evaluate_expr(struct control *jac) {
 				
 		else if (strncmp(jac->buf, "cbrt", 4) == 0)
 		{
-			func = 'u';
 			incrementBuff(jac,4);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, CBRT);
 			add_item(&head, number);
 		}
 		
@@ -253,9 +231,8 @@ long double parse_evaluate_expr(struct control *jac) {
 		
 		else if (strncmp(jac->buf, "abs", 3) == 0)
 		{
-			func = 'f';
 			incrementBuff(jac,3);
-			number = evaluateFunc(jac, func);
+			number = evaluateFunc(jac, ABS);
 			add_item(&head, number);
 		}
 
@@ -347,12 +324,12 @@ void calculate (struct node *head)
 	
 	tmp = head;
 
-	/* Now do addition and subtraction */
+	/* Now do additions and subtraction */
 
 	while (tmp != NULL && tmp->next != NULL && tmp->next->op != '?')
 	{
 		if (tmp->next->op == '+' || tmp->next->op == '-')
-		{	
+		{
 			if (tmp->next->op  == '+')
 				tmp->value = tmp->next->value + tmp->value;
 			
@@ -374,7 +351,7 @@ void delNextNode (struct node *head)
 	free(tmp);
 }
 
-long double evaluateFunc (struct control *jac, char func)
+long double evaluateFunc (struct control *jac, enum functions func)
 {
 	long double number;
 	unsigned int n = 0;
@@ -389,7 +366,7 @@ long double evaluateFunc (struct control *jac, char func)
 	{
 		jac->caller = true;					 /* indicates recursive call */
 		incrementBuff(jac,1);
-		number = parse_evaluate_expr(jac);   /* Evaluate expression inside parenthesis */		
+		number = parse_evaluate_expr(jac);   /* Evaluate expression inside parenthesis */	
 				
 		return switchFunc(&func, &number);
 	}
@@ -398,78 +375,74 @@ long double evaluateFunc (struct control *jac, char func)
 		return false;
 }
 
-long double switchFunc(char *op, long double *number)
+long double switchFunc(enum functions *func, long double *number)
 {
-	switch(*op) {
+	switch(*func) {
 	
-		case 'a':
-			return atan(*number);
+		case SIN:
+			return sinl(*number);
 			break;
 			
-		case 'b':
+		case COS:
+	    	return cosl(*number);
+	    	break;
+			
+		case TAN:
+			return tanl(*number);
+			break;
+			
+		case EXP:
+			return *number;
+			break;
+	
+		case ATAN:
+			return atanl(*number);
+			break;
+			
+		case BIN_DEC:
 			return bin_dec(*number);
 			break;
 			
-		case 'c':
-	    	return cos(*number);
-	    	break;
-	    	
-	    case 'd':
+		case DEC_BIN:
 	    	return dec_bin(*number);
 	    	break;
-	
-		case 'e':
-			return *number;
+	    				
+		case ABS:
+			return fabsl(*number);
 			break;
 			
-		case 'f':
-			return fabs(*number);
-			break;
-			
-	    case 'g':
-	    	return log10(*number);
+	    case LOG:
+	    	return log10l(*number);
 	    	break;
 	    	
-	    case 'i':
-	    	return asin(*number);
+	    case ASIN:
+	    	return asinl(*number);
 	    	break;
 			
-    	case 'l':
-	    	return log(*number);
+    	case LN:
+	    	return logl(*number);
 	    	break;
 	    	
-	    case 'm':
+	    case MOD:
 			return *number;
 			break;
 	    	
-	   	case 'o':
-	    	return acos(*number);
+	   	case ACOS:
+	    	return acosl(*number);
 	    	break;
 	    	
-	    case 'r':
-			return sqrt(*number);
-			break;	    	
-	    	
-		case 's':
-			return sin(*number);
+	    case SQRT:
+			return sqrtl(*number);
 			break;
 			
-		case 't':
-			return tan(*number);
-			break;
-			
-		case 'u':
-			return cbrt(*number);
-			break;
-			
-		case 'x':
-			return exp(*number);
+		case CBRT:
+			return cbrtl(*number);
 			break;
 			 	
 	    default:
 			return false;
 		   	break;
-	}  
+	}
 }
 
 void incrementBuff (struct control *jac, int n)
