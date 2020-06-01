@@ -46,29 +46,35 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>The syntax for other mathematical operators is the following</p>
 
-	- acos(x) Returns the angle (0 to π radians) whose cosine is x
+	- acos(x) Computes the angle (0 to π radians) whose cosine is x
 
-	- asin(x) Returns the angle (—π/2 to π/2 radians) whose sine is x
+	- asin(x) Computes the angle (—π/2 to π/2 radians) whose sine is x
 
-	- atan(x) Returns the angle (−π/2 to π/2 radians) whose tangent is x
+	- atan(x) Computes the angle (−π/2 to π/2 radians) whose tangent is x
 
-	- cos(x) Returns the cosine of x (x in radians)
+	- cos(x) Computes the cosine of x (x in radians)
 
-	- sin(x) Returns the sine of x (x in radians)
+	- sin(x) Computes the sine of x (x in radians)
 
-	- tan(x) Returns the tangent of x (x in radians)
+	- tan(x) Computes the tangent of x (x in radians)
 
-	- e^x Returns the exponential function of x (e<sup>x</sup>)
-
-	- ln(x) Returns the natural logarithm of x
-
-	- log(x) Returns the base 10 logarithm of x
-
-	- sqrt(x) Returns the square root of x
+	- e^x Computes the exponential function of x (e<sup>x</sup>)
 	
-	- n! Returns factorial of n
+	- sinh(x) Computes hyperbolic sine of x
 	
-	- cbrt(x) Returns the cube root of x
+	- cosh(x) Computes the hyperbolic cosine of x
+	
+	- tanhh(x) Computes the hyperbolic tangent of x
+
+	- ln(x) Computes the natural logarithm of x
+
+	- log(x) Computes the base 10 logarithm of x
+
+	- sqrt(x) Computes the square root of x
+	
+	- n! Computes factorial of n
+	
+	- cbrt(x) Computes the cube root of x
 	
 	- bin_dec(x) Conversion of binary x to decimal
 	

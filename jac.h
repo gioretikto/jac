@@ -23,7 +23,7 @@
 #define M_E 2.71828182845904523536028747135266249775L
 #endif
 
-enum functions {SIN, COS, TAN, ASIN, ACOS, ATAN, EXP, LOG, LN, SQRT, ABS, MOD, CBRT, BIN_DEC, DEC_BIN};
+enum functions {SIN, COS, TAN, ASIN, ACOS, ATAN, EXP, LOG, LN, SQRT, SINH, COSH, TANH, ASINH, ABS, MOD, CBRT, BIN_DEC, DEC_BIN};
 
 struct node{
 	long double value;
