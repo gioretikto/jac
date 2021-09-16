@@ -1,4 +1,4 @@
-<h1>JAC 1.3 - Scientific command line calculator</h1>
+<h1>JAC 1.3.5 - Scientific command line calculator</h1>
 
 <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
@@ -21,19 +21,20 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>You can use scientific notation by using the capital "E", since "e" indicates Euler's number.</p>
 
-<pre>h* 2.5E5 =
-1.6565172E-28
-</pre>
+<pre>h* 2.5E5 = 1.6565172E-28</pre>
 
 <p>other examples:</p>
 
 <pre>4000*ln2 or 4000ln2 = 2772.5887222397811449071</pre>
+
+<pre>(5^5 -5)/5 + 5 = 629</pre>
 
 <pre>tan(50+1)*3 = 2.709258448126293239</pre>
 
 <p>or</p>
 
 <pre>4+4.5-(34/(8*3-3)) = 6.8809523809523809525</pre>
+
 <pre>100 exp^-(ln2)1000/1590</pre>
 
 <p>You can also pass the expression as argument at the command line</p>
