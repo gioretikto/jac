@@ -21,9 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>You can use scientific notation by using the capital "E", since "e" indicates Euler's number.</p>
 
-<pre>h* 2.5E5 =
-1.6565172E-28
-</pre>
+<pre>h* 2.5E5 = 1.6565172E-28</pre>
 
 <p>other examples:</p>
 
