@@ -332,7 +332,7 @@ void calculate (struct node *head)
 
 	/* Multiply and divide first */
 
-	while (tmp->next != NULL && tmp->next->op != '?')
+	while (tmp->next != NULL && tmp->next->op != NOT_SET)
 	{
 		if (tmp->next->op == '*' || tmp->next->op == '/')
 		{
@@ -404,8 +404,8 @@ long double evaluateFunc (struct control *jac, enum functions func)
 
 long double switchFunc(enum functions *func, long double *number)
 {
-	switch(*func) {
-
+	switch(*func)
+	{
 		case SIN:
 			return sinl(*number);
 			break;
