@@ -333,17 +333,30 @@ void calculate (struct node *head)
 {
 	struct node *tmp = head;
 
-	/* Multiply and divide first */
+	/* divide and multiply first */
 
 	while (tmp->next != NULL && tmp->next->op != NOT_SET)
 	{
-		if (tmp->next->op == '*' || tmp->next->op == '/')
+		if (tmp->next->op == '/')
 		{
-			if (tmp->next->op == '*')
-				tmp->value = tmp->next->value * tmp->value;
+			tmp->value = tmp->next->value/tmp->value;
 
-			else
-				tmp->value = tmp->next->value / tmp->value;
+			delNextNode(tmp);
+		}
+
+		else
+			tmp = tmp->next;
+	}
+
+	tmp = head;
+
+	while (tmp->next != NULL && tmp->next->op != NOT_SET)
+	{
+		if (tmp->next->op == '*')
+		{
+
+			tmp->value = tmp->next->value * tmp->value;
+
 
 			delNextNode(tmp);
 		}

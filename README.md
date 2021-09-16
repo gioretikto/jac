@@ -27,11 +27,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <pre>4000*ln2 or 4000ln2 = 2772.5887222397811449071</pre>
 
+<pre>(5^5 -5)/5 + 5 = 629</pre>
+
 <pre>tan(50+1)*3 = 2.709258448126293239</pre>
 
 <p>or</p>
 
 <pre>4+4.5-(34/(8*3-3)) = 6.8809523809523809525</pre>
+
 <pre>100 exp^-(ln2)1000/1590</pre>
 
 <p>You can also pass the expression as argument at the command line</p>
