@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #define MAX 1000
+#define NOT_SET -7
 
 #define SPEED_LIGHT 299792458 			/* Speed of light in vacuum m/s (exact) */
 #define CHARGE 1.602176634e-19 			/* C elementary charge */
