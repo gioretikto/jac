@@ -11,6 +11,9 @@ long double parse_evaluate_expr(struct control *jac)
 
 	while (jac->len < MAX && *jac->buf != '\0')
 	{
+
+		/* Read operator first; you don't want to read -5 and loose the - */
+
 		if (*jac->buf == '/' || *jac->buf == '*' || *jac->buf == '+' || *jac->buf == '-')	/* Add new item when you encounter an operator */
 		{
 			if (head == NULL && *jac->buf == '-')
@@ -292,7 +295,7 @@ long double parse_evaluate_expr(struct control *jac)
 
 		return 0;
 	}
-	
+
 	else if (head == NULL)
 	{
 		jac->failure = true;
@@ -316,14 +319,14 @@ long double parse_evaluate_expr(struct control *jac)
 	return 0;
 }
 
-void add_item(struct node **ptr, long double data)
+void add_item (struct node **ptr, long double data)
 {
 	struct node *new_item = malloc(sizeof *new_item);
 
 	new_item->value = data;
-    new_item->next = *ptr;
-    new_item->op = '*';
-    *ptr = new_item;
+	new_item->next = *ptr;
+	new_item->op = '*';
+	*ptr = new_item;
 }
 
 void calculate (struct node *head)
@@ -338,13 +341,13 @@ void calculate (struct node *head)
 		{
 			if (tmp->next->op == '*')
 				tmp->value = tmp->next->value * tmp->value;
-			
+
 			else
 				tmp->value = tmp->next->value / tmp->value;
-			
+
 			delNextNode(tmp);
 		}
-		
+
 		else
 			tmp = tmp->next;
 	}
