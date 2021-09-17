@@ -1,8 +1,6 @@
 #include "jac.h"
 #include <math.h>
 
-int searchFunctions(struct control *jac, struct node *head);
-
 long double parse_evaluate_expr(struct control *jac)
 {
 	long double number, result;
@@ -60,8 +58,220 @@ long double parse_evaluate_expr(struct control *jac)
 
 		/* Start parsing for functions like sin, cos, etc */
 
-		else if(searchFunctions(jac, head));
+		else if (strncmp(jac->buf, "m_p", 3) == 0) 		/* Proton Mass */
+		{
+			add_item(&head, PROTON_MASS);
+			incrementBuff(jac,3);
+		}
+
+		else if (strncmp(jac->buf, "m_e", 3) == 0) 		/* Electron mass */
+		{
+			add_item(&head, ELECTRON_MASS);
+			incrementBuff(jac,3);
+		}
+
+		else if (strncmp(jac->buf, "c_0", 3) == 0)  	/* Speed of light in vacuum m/s (exact) */
+		{
+			add_item(&head, SPEED_LIGHT);
+			incrementBuff(jac,3);
+		}
+
+		else if (*jac->buf == 'q')						/* elementary charge*/
+		{
+			add_item(&head, CHARGE);
+			incrementBuff(jac,1);		
+		}
+
+		else if (*jac->buf == 'h')						/* Plank's constant*/
+		{
+			add_item(&head, PLANK);
+			incrementBuff(jac,1);
+		}
+
+		else if (*jac->buf == '^')
+		{
+			incrementBuff(jac,1);
+			number = evaluateFunc(jac, EXP);
+			head->value = pow(head->value, number);
+		}
+
+		else if (*jac->buf == '%')
+		{
+			incrementBuff(jac,1);
+			number = evaluateFunc(jac, MOD);
+			head->value = fmodl(head->value, number);
+		}
+
+		else if (*jac->buf == '!') 	/* Factorial */
+		{
+			head->value = factorial(head->value);
+			incrementBuff(jac,1);
+		}
+
+		else if (strncmp(jac->buf, "asinhl", 6) == 0)
+		{
+			incrementBuff(jac,6);
+			number = evaluateFunc(jac, ASINH);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "asin", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, ASIN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "atan", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, ATAN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "acos", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, ACOS);
+			add_item(&head, number);			
+		}
+
+		else if (strncmp(jac->buf, "sqrt", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, SQRT);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "sinh", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, SINH);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "cosh", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, COSH);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "tanh", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, TANH);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "cos", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, COS);
+			add_item(&head, number);
+		}
 		
+		else if (strncmp(jac->buf, "sin", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, SIN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "tan", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, TAN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "log", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, LOG);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "ln", 2) == 0)
+		{
+			incrementBuff(jac,2);
+			number = evaluateFunc(jac, LN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "e_0", 3) == 0) 		/* Permittivity of free space */
+		{
+			add_item(&head, E_0);
+			incrementBuff(jac,3);
+		}
+
+		else if (*jac->buf == 'E')
+		{
+			add_item(&head, 10);
+			incrementBuff(jac,1);
+			
+			if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
+			{
+				incrementBuff(jac,n);
+				head->value = pow(head->value, number);
+			}
+
+			else
+				jac->failure = true;
+		}
+
+		else if (*jac->buf == 'e')
+		{
+			add_item(&head, M_E);
+			incrementBuff(jac,1);
+		}
+
+		else if (strncmp(jac->buf, "n_a", 3) == 0)  /* Avogadros's number */
+		{
+			add_item(&head, AVOGADRO);
+			incrementBuff(jac,3);
+		}
+
+		else if (strncmp(jac->buf, "bin_dec", 7) == 0)
+		{
+			incrementBuff(jac,7);
+			number = evaluateFunc(jac, BIN_DEC);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "dec_bin", 7) == 0)
+		{
+			incrementBuff(jac,7);
+			number = evaluateFunc(jac, DEC_BIN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "cbrt", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, CBRT);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "pi", 2) == 0)
+		{
+			add_item(&head, M_PIl);
+			incrementBuff(jac,2);
+		}
+
+		else if (strncmp(jac->buf, "abs", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, ABS);
+			add_item(&head, number);
+		}
+
+		else if (*jac->buf == 'k')  	/* Boltzmann's constant */
+		{
+			add_item(&head, K_B);
+			incrementBuff(jac,1);
+		}
+
 		else if (isalpha(*jac->buf)) 	/* Syntax error */
 		{
 			jac->failure = true;
@@ -72,7 +282,7 @@ long double parse_evaluate_expr(struct control *jac)
 		else
 			continue;
 
-	}
+	} /* End of parsing for functions*/
 
 	if (jac->len == MAX)
 	{
@@ -300,237 +510,4 @@ void incrementBuff (struct control *jac, int n)
 {
 	jac->buf += n;
 	jac->len += n;
-}
-
-
-
-/* Parse for functions like sin, cos, etc */
-
-int searchFunctions(struct control *jac, struct node *head)
-{
-
-	int found = true;
-
-	long double number;
-
-	unsigned int n = 0;
-
-	if (strncmp(jac->buf, "m_p", 3) == 0) 			/* Proton Mass */
-	{
-			add_item(&head, PROTON_MASS);
-			incrementBuff(jac,3);
-	}
-
-	else if (strncmp(jac->buf, "m_e", 3) == 0) 		/* Electron mass */
-	{
-			add_item(&head, ELECTRON_MASS);
-			incrementBuff(jac,3);
-	}
-
-	else if (strncmp(jac->buf, "c_0", 3) == 0)  	/* Speed of light in vacuum m/s (exact) */
-	{
-		add_item(&head, SPEED_LIGHT);
-		incrementBuff(jac,3);
-	}
-
-	else if (*jac->buf == 'q')						/* elementary charge*/
-	{
-		add_item(&head, CHARGE);
-		incrementBuff(jac,1);		
-	}
-
-	else if (*jac->buf == 'h')						/* Plank's constant*/
-	{
-		add_item(&head, PLANK);
-		incrementBuff(jac,1);
-	}
-
-	else if (*jac->buf == '^')
-	{
-		incrementBuff(jac,1);
-		number = evaluateFunc(jac, EXP);
-		head->value = pow(head->value, number);
-	}
-
-	else if (*jac->buf == '%')
-	{
-		incrementBuff(jac,1);
-		number = evaluateFunc(jac, MOD);
-		head->value = fmodl(head->value, number);
-	}
-
-	else if (*jac->buf == '!') 	/* Factorial */
-	{
-		head->value = factorial(head->value);
-		incrementBuff(jac,1);
-	}
-
-	else if (strncmp(jac->buf, "asinhl", 6) == 0)
-	{
-		incrementBuff(jac,6);
-		number = evaluateFunc(jac, ASINH);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "asin", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		number = evaluateFunc(jac, ASIN);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "atan", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		number = evaluateFunc(jac, ATAN);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "acos", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		number = evaluateFunc(jac, ACOS);
-		add_item(&head, number);			
-	}
-
-	else if (strncmp(jac->buf, "sqrt", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		number = evaluateFunc(jac, SQRT);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "sinh", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		number = evaluateFunc(jac, SINH);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "cosh", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		number = evaluateFunc(jac, COSH);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "tanh", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		number = evaluateFunc(jac, TANH);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "cos", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		number = evaluateFunc(jac, COS);
-		add_item(&head, number);
-	}
-		
-	else if (strncmp(jac->buf, "sin", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		number = evaluateFunc(jac, SIN);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "tan", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		number = evaluateFunc(jac, TAN);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "log", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		number = evaluateFunc(jac, LOG);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "ln", 2) == 0)
-	{
-		incrementBuff(jac,2);
-		number = evaluateFunc(jac, LN);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "e_0", 3) == 0) 		/* Permittivity of free space */
-	{
-		add_item(&head, E_0);
-		incrementBuff(jac,3);
-	}
-
-	else if (*jac->buf == 'E')
-	{
-		add_item(&head, 10);
-		incrementBuff(jac,1);
-
-		if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
-		{
-			incrementBuff(jac,n);
-			head->value = pow(head->value, number);
-		}
-
-		else
-			jac->failure = true;
-	}
-
-	else if (*jac->buf == 'e')
-	{
-		add_item(&head, M_E);
-		incrementBuff(jac,1);
-	}
-
-	else if (strncmp(jac->buf, "n_a", 3) == 0)  /* Avogadros's number */
-	{
-		add_item(&head, AVOGADRO);
-		incrementBuff(jac,3);
-	}
-
-	else if (strncmp(jac->buf, "bin_dec", 7) == 0)
-	{
-		incrementBuff(jac,7);
-		number = evaluateFunc(jac, BIN_DEC);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "dec_bin", 7) == 0)
-	{
-		incrementBuff(jac,7);
-		number = evaluateFunc(jac, DEC_BIN);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "cbrt", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		number = evaluateFunc(jac, CBRT);
-		add_item(&head, number);
-	}
-
-	else if (strncmp(jac->buf, "pi", 2) == 0)
-	{
-		add_item(&head, M_PIl);
-		incrementBuff(jac,2);
-	}
-
-	else if (strncmp(jac->buf, "abs", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		number = evaluateFunc(jac, ABS);
-		add_item(&head, number);
-	}
-
-	else if (*jac->buf == 'k')  	/* Boltzmann's constant */
-	{
-		add_item(&head, K_B);
-		incrementBuff(jac,1);
-	}
-
-	else
-		found = false;
-
-	return found;
 }
