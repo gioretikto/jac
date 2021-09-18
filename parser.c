@@ -1,6 +1,12 @@
 #include "jac.h"
 #include <math.h>
 
+#define TAIL_OP 'x' /* Operator of the tail node */
+
+void add_item (struct node **ptr, long double data);
+static void reverse(struct node** head_ref);
+void delNextNode (struct node *node_pt);
+
 long double parse_evaluate_expr(struct control *jac)
 {
 	long double number, result;
@@ -282,7 +288,9 @@ long double parse_evaluate_expr(struct control *jac)
 		else
 			continue;
 
-	} /* End of parsing for functions*/
+	} /* End of parsing */
+
+	/* Once parsed jac evaluates the expression */
 
 	if (jac->len == MAX)
 	{
@@ -304,10 +312,13 @@ long double parse_evaluate_expr(struct control *jac)
 
 	else
 	{
-		head->op = NOT_SET;
+		head->op = TAIL_OP;
 
 		if (head->next != NULL)
+		{
+			reverse(&head);
 			calculate(head);
+		}
 
 		result = head->value;
 
@@ -335,11 +346,11 @@ void calculate (struct node *head)
 
 	/* divide first */
 
-	while (tmp->next != NULL && tmp->next->op != NOT_SET)
+	while (tmp->next != NULL && tmp->op != TAIL_OP)
 	{
-		if (tmp->next->op == '/')
+		if (tmp->op == '/')
 		{
-			tmp->value = tmp->next->value/tmp->value;
+			tmp->value = tmp->value / tmp->next->value;
 
 			delNextNode(tmp);
 		}
@@ -352,12 +363,12 @@ void calculate (struct node *head)
 
 	/* then multiply */
 
-	while (tmp->next != NULL && tmp->next->op != NOT_SET)
+	while (tmp->next != NULL && tmp->op != TAIL_OP)
 	{
-		if (tmp->next->op == '*')
+		if (tmp->op == '*')
 		{
 
-			tmp->value = tmp->next->value * tmp->value;
+			tmp->value = tmp->value * tmp->next->value;
 
 
 			delNextNode(tmp);
@@ -371,15 +382,15 @@ void calculate (struct node *head)
 
 	/* Now do additions and subtraction */
 
-	while (tmp != NULL && tmp->next != NULL && tmp->next->op != NOT_SET)
+	while (tmp != NULL && tmp->next != NULL && tmp->op != TAIL_OP)
 	{
-		if (tmp->next->op == '+' || tmp->next->op == '-')
+		if (tmp->op == '+' || tmp->op == '-')
 		{
-			if (tmp->next->op  == '+')
-				tmp->value = tmp->next->value + tmp->value;
+			if (tmp->op  == '+')
+				tmp->value = tmp->value + tmp->next->value;
 
 			else
-				tmp->value = tmp->next->value - tmp->value;
+				tmp->value = tmp->value - tmp->next->value;
 
 			delNextNode(tmp);
 		}
@@ -392,6 +403,7 @@ void calculate (struct node *head)
 void delNextNode (struct node *head)
 {
 	struct node *tmp = head->next;
+	head->op = head->next->op;
 	head->next = head->next->next;
 	free(tmp);
 }
@@ -426,31 +438,24 @@ long double switchFunc(enum functions *func, long double *number)
 	{
 		case SIN:
 			return sinl(*number);
-			break;
 
 		case COS:
 	    	return cosl(*number);
-	    	break;
 
 		case TAN:
 			return tanl(*number);
-			break;
 			
 		case EXP:
 			return *number;
-			break;
 
 		case ATAN:
 			return atanl(*number);
-			break;
 
 		case SINH:
 			return sinhl(*number);
-			break;
 
 		case COSH:
 			return coshl(*number);
-			break;
 
 		case TANH:
 			return tanhl(*number);
@@ -466,7 +471,6 @@ long double switchFunc(enum functions *func, long double *number)
 
 		case DEC_BIN:
 	    	return dec_bin(*number);
-	    	break;
 
 		case ABS:
 			return fabsl(*number);
@@ -478,11 +482,9 @@ long double switchFunc(enum functions *func, long double *number)
 
 	    case ASIN:
 	    	return asinl(*number);
-	    	break;
 
     	case LN:
 	    	return logl(*number);
-	    	break;
 
 	    case MOD:
 			return *number;
@@ -490,19 +492,15 @@ long double switchFunc(enum functions *func, long double *number)
 
 	   	case ACOS:
 	    	return acosl(*number);
-	    	break;
 
 	    case SQRT:
 			return sqrtl(*number);
-			break;
 
 		case CBRT:
 			return cbrtl(*number);
-			break;
 
 	    default:
 			return false;
-		   	break;
 	}
 }
 
@@ -510,4 +508,24 @@ void incrementBuff (struct control *jac, int n)
 {
 	jac->buf += n;
 	jac->len += n;
+}
+
+/* Function to reverse the linked list */
+static void reverse(struct node** head_ref)
+{
+    struct node* prev = NULL;
+    struct node* current = *head_ref;
+    struct node* next = NULL;
+    while (current != NULL) {
+        // Store next
+        next = current->next;
+ 
+        // Reverse current node's pointer
+        current->next = prev;
+ 
+        // Move pointers one position ahead.
+        prev = current;
+        current = next;
+    }
+    *head_ref = prev;
 }
