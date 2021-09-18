@@ -5,7 +5,6 @@
 #include <stdbool.h>
 
 #define MAX 1000
-#define NOT_SET -7
 
 #define SPEED_LIGHT 299792458 			/* Speed of light in vacuum m/s (exact) */
 #define CHARGE 1.602176634e-19 			/* C elementary charge */
@@ -40,11 +39,9 @@ struct control{
 	bool failure;
 };
 
-void add_item(struct node **head, long double data);
 void print_result(long double x);
 void remove_spaces(char *str);
 void calculate (struct node *head);
-void delNextNode (struct node *node_pt);
 unsigned long factorial(unsigned long f);
 long double parse_evaluate_expr(struct control *jac);
 bool areParenthesisBalanced(char *exp);
