@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 			result = parse_evaluate_expr(&jac);
 
 			if (jac.failure == false)
-				print_result(result);		
+				print_result(result);
 		}
 
 		return 0;
@@ -76,10 +76,12 @@ int main(int argc, char* argv[])
 			remove_spaces(jac.buf);
 
 			result = parse_evaluate_expr(&jac);
-			
+
 			if (jac.failure == false)
 				print_result(result);
-			
+			else
+				fprintf(stderr,"%s\n","Syntax error");
+
 			jac.failure = false;
 			printf(">>");
 		}
