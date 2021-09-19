@@ -18,8 +18,6 @@ long double switchFunc(enum functions *func, long double *number);
 int bin_dec(long long n);
 long long dec_bin(int n);
 enum functions searchFunction (struct control *jac);
-bool checkPi(struct control *jac);
-long double parseFuncExpr(struct control *jac, long double number);
 
 long double parse_evaluate_expr(struct control *jac)
 {
@@ -127,7 +125,7 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			head->value = factorial(head->value);
 			incrementBuff(jac,1);
-		}	
+		}
 
 		else if (strncmp(jac->buf, "e_0", 3) == 0) 		/* Permittivity of free space */
 		{
@@ -160,7 +158,7 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			add_item(&head, AVOGADRO);
 			incrementBuff(jac,3);
-		}		
+		}	
 
 		else if (*jac->buf == 'k')  	/* Boltzmann's constant */
 		{
@@ -319,16 +317,9 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 	long double number;
 	unsigned int n = 0;
 
-	if (checkPi(jac) == true)
-	{
-		number = parseFuncExpr(jac, M_PIl);
-		return switchFunc(&func, &number);
-	}
-
-    else if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
+    if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
     {
     	incrementBuff(jac,n);
-		number = parseFuncExpr(jac, number);
 		return switchFunc(&func, &number);
 	}
 
@@ -345,67 +336,6 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 		jac->failure = true;
 		return false;
 	}
-}
-
-bool checkPi(struct control *jac)
-{
-	if (strncmp(jac->buf, "pi", 2) == 0)
-	{
-		incrementBuff(jac,2);
-		return true;
-	}
-
-	else
-		return false;
-}
-
-long double parseFuncExpr(struct control *jac, long double number)
-{
-	char op;
-
-	long double number2;
-
-	unsigned int n = 0;
-
-	op = *jac->buf;
-	
-	while (op == '*' || op == '/')
-	{
-		if (checkPi(jac) == true)
-		{
-			number2 = M_PIl;
-
-			if (op == '*')
-				number = number * number2;
-			else
-				number = number / number2;
-
-			incrementBuff(jac,1);
-
-			op = *jac->buf;
-
-			continue;
-		}
-
-		else if (1 == sscanf(jac->buf, "%Lf%n", &number2, &n))
-		{
-			if (op == '*')
-				number = number * number2;
-			else
-				number = number / number2;
-
-	    	incrementBuff(jac,n);
-
-			op = *jac->buf;
-
-			continue;
-		}
-
-		else
-			return number;
-	}
-
-	return number;
 }
 
 long double switchFunc(enum functions *func, long double *number)
@@ -608,5 +538,4 @@ enum functions searchFunction (struct control *jac)
 		}
 
 		return NONE;
-
 }

@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
 
 	if (argc > 1)
 	{	
+
 		strcpy(line, argv[1]);
 
 		for (i = 2; i < argc; i++)
@@ -42,10 +43,14 @@ int main(int argc, char* argv[])
 		}
 
 		else
-		{		
+		{
+
 			jac.buf = line;
 
 			remove_spaces(jac.buf);
+
+			if (jac.buf[0] == '\n')
+				return 0;
 
 			result = parse_evaluate_expr(&jac);
 
@@ -57,9 +62,15 @@ int main(int argc, char* argv[])
 	}
 
 	for (;;)
-	{	
+	{
+
 		if (fgets(jac.buf = line, MAX, stdin) == NULL || *buf == 'x')
 			break;
+
+		if (jac.buf[0] == '\n'){
+			printf(">>");
+			continue;
+		}
 
 		if (!areParenthesisBalanced(line))
 		{
@@ -85,6 +96,7 @@ int main(int argc, char* argv[])
 			jac.failure = false;
 			printf(">>");
 		}
+
 	}
 
 	return 0;

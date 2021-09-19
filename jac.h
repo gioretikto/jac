@@ -42,4 +42,3 @@ bool areParenthesisBalanced(char *exp);
 bool checkSyntax(char *str);
 bool checkPar (struct control *jac, struct node *head);
 void incrementBuff (struct control *jac, int n);
-
