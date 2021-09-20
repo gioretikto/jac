@@ -15,7 +15,9 @@ int main(int argc, char* argv[])
 	struct control jac;
 
 	jac.len = 0;
-	jac.caller = false;
+	jac.insideBrackets = false;
+	jac.inFunc = false;
+	jac.bracketsFunc = false;
 	jac.failure = false;
 
 	if (argc == 1)

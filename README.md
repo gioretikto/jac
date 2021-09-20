@@ -15,6 +15,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one). JAC is the acronym of "Just Another Calculator" and it is particularly suitable for scientifical calculations. Examples of usage of jac are</p>
 
+<pre>sin pi + 2 + 5 = 7</pre>
+
+<pre>sin (pi/2 + 2 + 5) = 0.7539022543433</pre>
+
 <p>Evaluation of the rest energy of the electron</p>
 
 <pre>m_e * m_0 = 8.187105776823886314e-14</pre>
@@ -81,7 +85,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 	
 	- dec_bin(x) Conversion of decimal x to binary
 	
-	-abs(x) absolute value of x
+	- abs(x) absolute value of x
+
+<p>Remember to use parenthesis with trigonometric functions like sin(pi/2) and not sin pi/2.</p>
 	
 <h2>Constants</h2>
 

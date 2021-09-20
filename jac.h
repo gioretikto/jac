@@ -29,7 +29,9 @@ struct node{
 struct control{
 	char *buf;
 	int len;
-	bool caller;
+	bool insideBrackets;
+	bool inFunc;
+	bool bracketsFunc;
 	bool failure;
 };
 

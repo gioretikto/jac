@@ -41,6 +41,17 @@ long double parse_evaluate_expr(struct control *jac)
 				head->op = '*';
 			}
 
+			else if (jac->inFunc == true && head != NULL && jac->bracketsFunc == false)
+			{
+				if (*jac->buf == '-' || *jac->buf == '+' )
+				{
+					printf("expr is: %Lf\n", head->value);
+					reverse(&head);
+					calculate(head);
+					return head->value;
+				}
+			}
+
 			else
 				head->op = *jac->buf;
 
@@ -57,7 +68,11 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			incrementBuff(jac,1);
 
-			jac->caller = true;					 /* indicates recursive call */
+			if (jac->inFunc == true)
+				jac->bracketsFunc = true;
+
+			else
+				jac->insideBrackets = true;
 
 			number = parse_evaluate_expr(jac);   /* Recursive call: evaluate expression inside parenthesis */
 
@@ -68,9 +83,18 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			incrementBuff(jac,1);
 
-			if (jac->caller != false)
+			if (jac->bracketsFunc == true)
 			{
-				jac->caller = false;
+				jac->bracketsFunc = false;
+				printf("expr is: %Lf\n", head->value);
+				reverse(&head);
+				calculate(head);
+				return head->value;
+			}
+
+			else
+			{
+				jac->insideBrackets = false;
 				break;
 			}
 		}
@@ -171,6 +195,7 @@ long double parse_evaluate_expr(struct control *jac)
 		else if ((function = searchFunction(jac)) != NONE)
 		{
 			number = evaluateFuncResult(jac, function);
+
 			add_item(&head, number);
 		}
 
@@ -315,27 +340,14 @@ void delNextNode (struct node *head)
 long double evaluateFuncResult (struct control *jac, enum functions func)
 {
 	long double number;
-	unsigned int n = 0;
 
-    if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
-    {
-    	incrementBuff(jac,n);
-		return switchFunc(&func, &number);
-	}
+	jac->inFunc = true;
 
-	else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')
-	{
-		jac->caller = true;					 /* indicates recursive call */
-		incrementBuff(jac,1);
-		number = parse_evaluate_expr(jac);   /* Evaluate expression inside parenthesis */
-		return switchFunc(&func, &number);
-	}
+	number = parse_evaluate_expr(jac);
 
-	else
-	{
-		jac->failure = true;
-		return false;
-	}
+	jac->inFunc = false;
+
+	return switchFunc(&func, &number);
 }
 
 long double switchFunc(enum functions *func, long double *number)
