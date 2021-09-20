@@ -5,7 +5,6 @@
 #include <stdbool.h>
 
 #define MAX 1000
-#define NOT_SET -7
 
 #define SPEED_LIGHT 299792458 			/* Speed of light in vacuum m/s (exact) */
 #define CHARGE 1.602176634e-19 			/* C elementary charge */
@@ -16,15 +15,9 @@
 #define AVOGADRO 6.02214179e23			/* Avogadros's number particles/mol */
 #define K_B 1.3806504e-23				/* Boltzmann's constant j/K */
 
-#ifndef M_PIl
-#define M_PIl 3.141592653589793238462643383279502884L
-#endif
-
 #ifndef M_E
 #define M_E 2.71828182845904523536028747135266249775L
 #endif
-
-enum functions {SIN, COS, TAN, ASIN, ACOS, ATAN, EXP, LOG, LN, SQRT, SINH, COSH, TANH, ASINH, ABS, MOD, CBRT, BIN_DEC, DEC_BIN};
 
 struct node{
 	long double value;
@@ -36,22 +29,18 @@ struct node{
 struct control{
 	char *buf;
 	int len;
-	bool caller;
+	bool insideBrackets;
+	bool inFunc;
+	bool bracketsFunc;
 	bool failure;
 };
 
-void add_item(struct node **head, long double data);
 void print_result(long double x);
 void remove_spaces(char *str);
-void calculate (struct node *head);
-void delNextNode (struct node *node_pt);
+
 unsigned long factorial(unsigned long f);
 long double parse_evaluate_expr(struct control *jac);
 bool areParenthesisBalanced(char *exp);
 bool checkSyntax(char *str);
 bool checkPar (struct control *jac, struct node *head);
-long double evaluateFunc (struct control *jac, enum functions func);
-long double switchFunc(enum functions *func, long double *number);
 void incrementBuff (struct control *jac, int n);
-int bin_dec(long long n);
-long long dec_bin(int n);

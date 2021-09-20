@@ -41,14 +41,6 @@ long double parse_evaluate_expr(struct control *jac)
 				head->op = '*';
 			}
 
-			else if (((*jac->buf == '-') || (*jac->buf == '+')) && (head != NULL && jac->inFunc == true && jac->bracketsFunc == false))
-			{
-				printf("expr is: %Lf\n", head->value);
-				reverse(&head);
-				calculate(head);
-				return head->value;
-			}
-
 			else
 				head->op = *jac->buf;
 
@@ -65,10 +57,7 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			incrementBuff(jac,1);
 
-			jac->insideBrackets = true;			 /* indicates recursive call */
-			
-			if (jac->inFunc == true)
-				jac->bracketsFunc = true;
+			jac->caller = true;					 /* indicates recursive call */
 
 			number = parse_evaluate_expr(jac);   /* Recursive call: evaluate expression inside parenthesis */
 
@@ -79,17 +68,9 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			incrementBuff(jac,1);
 
-			if (jac->inFunc == true) {
-				jac->bracketsFunc = false;
-				printf("expr is: %Lf\n", head->value);
-				reverse(&head);
-				calculate(head);
-				return head->value;
-			}
-
-			if (jac->insideBrackets != false)
+			if (jac->caller != false)
 			{
-				jac->insideBrackets = false;
+				jac->caller = false;
 				break;
 			}
 		}
@@ -334,14 +315,27 @@ void delNextNode (struct node *head)
 long double evaluateFuncResult (struct control *jac, enum functions func)
 {
 	long double number;
+	unsigned int n = 0;
 
-	jac->inFunc = true;
+    if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
+    {
+    	incrementBuff(jac,n);
+		return switchFunc(&func, &number);
+	}
 
-	number = parse_evaluate_expr(jac);
+	else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')
+	{
+		jac->caller = true;					 /* indicates recursive call */
+		incrementBuff(jac,1);
+		number = parse_evaluate_expr(jac);   /* Evaluate expression inside parenthesis */
+		return switchFunc(&func, &number);
+	}
 
-	jac->inFunc = false;
-
-	return switchFunc(&func, &number);
+	else
+	{
+		jac->failure = true;
+		return false;
+	}
 }
 
 long double switchFunc(enum functions *func, long double *number)

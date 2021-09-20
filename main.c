@@ -1,4 +1,4 @@
-/* jac v.1.3 - Giovanni Resta 29/05/2020 */
+/* jac v.1.3.5 - Giovanni Resta 29/05/2020 */
 
 #include "jac.h"
 
@@ -15,7 +15,9 @@ int main(int argc, char* argv[])
 	struct control jac;
 
 	jac.len = 0;
-	jac.caller = false;
+	jac.insideBrackets = false;
+	jac.inFunc = false;
+	jac.bracketsFunc = false;
 	jac.failure = false;
 
 	if (argc == 1)
@@ -23,6 +25,7 @@ int main(int argc, char* argv[])
 
 	if (argc > 1)
 	{	
+
 		strcpy(line, argv[1]);
 
 		for (i = 2; i < argc; i++)
@@ -42,24 +45,34 @@ int main(int argc, char* argv[])
 		}
 
 		else
-		{		
+		{
+
 			jac.buf = line;
 
 			remove_spaces(jac.buf);
 
+			if (jac.buf[0] == '\n')
+				return 0;
+
 			result = parse_evaluate_expr(&jac);
 
 			if (jac.failure == false)
-				print_result(result);		
+				print_result(result);
 		}
 
 		return 0;
 	}
 
 	for (;;)
-	{	
+	{
+
 		if (fgets(jac.buf = line, MAX, stdin) == NULL || *buf == 'x')
 			break;
+
+		if (jac.buf[0] == '\n'){
+			printf(">>");
+			continue;
+		}
 
 		if (!areParenthesisBalanced(line))
 		{
@@ -76,13 +89,16 @@ int main(int argc, char* argv[])
 			remove_spaces(jac.buf);
 
 			result = parse_evaluate_expr(&jac);
-			
+
 			if (jac.failure == false)
 				print_result(result);
-			
+			else
+				fprintf(stderr,"%s\n","Syntax error");
+
 			jac.failure = false;
 			printf(">>");
 		}
+
 	}
 
 	return 0;

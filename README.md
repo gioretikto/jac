@@ -1,4 +1,4 @@
-<h1>JAC 1.3 - Scientific command line calculator</h1>
+<h1>JAC 1.3.5 - Scientific command line calculator</h1>
 
 <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
@@ -14,6 +14,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 <h2>USAGE</h2>
 
 <p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one). JAC is the acronym of "Just Another Calculator" and it is particularly suitable for scientifical calculations. Examples of usage of jac are</p>
+
+<pre>sin pi + 2 + 5 = 7</pre>
+
+<pre>sin (pi/2 + 2 + 5) = 0.7539022543433</pre>
 
 <p>Evaluation of the rest energy of the electron</p>
 
@@ -43,7 +47,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>If you pass the expression at the command line, please be mindful that bash treats parenthesis as special charachters therefore escaping is needed:</p>
 
-<pre>jac 4+4.5-\(34/\(8*3-3\)\)</pre>
+<pre>jac "4+4.5-(34/(8*3-3))"</pre>
 
 <p>The syntax for other mathematical operators is the following</p>
 
@@ -81,7 +85,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 	
 	- dec_bin(x) Conversion of decimal x to binary
 	
-	-abs(x) absolute value of x
+	- abs(x) absolute value of x
+
+<p>Remember to use parenthesis with trigonometric functions like sin(pi/2) and not sin pi/2.</p>
 	
 <h2>Constants</h2>
 

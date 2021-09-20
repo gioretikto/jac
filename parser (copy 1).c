@@ -2,22 +2,16 @@
 #include <math.h>
 
 #define TAIL_OP 'x' /* Operator of the tail node */
-
-#ifndef M_PIl
-#define M_PIl 3.141592653589793238462643383279502884L
-#endif
-
-enum functions {NONE, SIN, COS, TAN, ASIN, ACOS, ATAN, EXP, LOG, LN, SQRT, SINH, COSH, TANH, ASINH, ABS, MOD, CBRT, BIN_DEC, DEC_BIN};
+enum functions {SIN, COS, TAN, ASIN, ACOS, ATAN, EXP, LOG, LN, SQRT, SINH, COSH, TANH, ASINH, ABS, MOD, CBRT, BIN_DEC, DEC_BIN};
 
 void add_item (struct node **ptr, long double data);
 static void reverse(struct node** head_ref);
 void delNextNode (struct node *node_pt);
 void calculate (struct node *head);
-long double evaluateFuncResult (struct control *jac, enum functions func);
+long double evaluateFunc (struct control *jac, enum functions func);
 long double switchFunc(enum functions *func, long double *number);
 int bin_dec(long long n);
 long long dec_bin(int n);
-enum functions searchFunction (struct control *jac);
 
 long double parse_evaluate_expr(struct control *jac)
 {
@@ -27,10 +21,9 @@ long double parse_evaluate_expr(struct control *jac)
 
 	struct node *head = NULL;
 
-	enum functions function;
-
 	while (jac->len < MAX && *jac->buf != '\0')
 	{
+
 		/* Read operator first; you don't want to read -5 and loose the - */
 
 		if (*jac->buf == '/' || *jac->buf == '*' || *jac->buf == '+' || *jac->buf == '-')	/* Add new item when you encounter an operator */
@@ -39,14 +32,6 @@ long double parse_evaluate_expr(struct control *jac)
 			{
 				add_item(&head, -1);
 				head->op = '*';
-			}
-
-			else if (((*jac->buf == '-') || (*jac->buf == '+')) && (head != NULL && jac->inFunc == true && jac->bracketsFunc == false))
-			{
-				printf("expr is: %Lf\n", head->value);
-				reverse(&head);
-				calculate(head);
-				return head->value;
 			}
 
 			else
@@ -65,10 +50,7 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			incrementBuff(jac,1);
 
-			jac->insideBrackets = true;			 /* indicates recursive call */
-			
-			if (jac->inFunc == true)
-				jac->bracketsFunc = true;
+			jac->caller = true;					 /* indicates recursive call */
 
 			number = parse_evaluate_expr(jac);   /* Recursive call: evaluate expression inside parenthesis */
 
@@ -79,22 +61,14 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			incrementBuff(jac,1);
 
-			if (jac->inFunc == true) {
-				jac->bracketsFunc = false;
-				printf("expr is: %Lf\n", head->value);
-				reverse(&head);
-				calculate(head);
-				return head->value;
-			}
-
-			if (jac->insideBrackets != false)
+			if (jac->caller != false)
 			{
-				jac->insideBrackets = false;
+				jac->caller = false;
 				break;
 			}
 		}
 
-		/* Start parsing for constants */
+		/* Start parsing for functions like sin, cos, etc */
 
 		else if (strncmp(jac->buf, "m_p", 3) == 0) 		/* Proton Mass */
 		{
@@ -129,14 +103,14 @@ long double parse_evaluate_expr(struct control *jac)
 		else if (*jac->buf == '^')
 		{
 			incrementBuff(jac,1);
-			number = evaluateFuncResult(jac, EXP);
+			number = evaluateFunc(jac, EXP);
 			head->value = pow(head->value, number);
 		}
 
 		else if (*jac->buf == '%')
 		{
 			incrementBuff(jac,1);
-			number = evaluateFuncResult(jac, MOD);
+			number = evaluateFunc(jac, MOD);
 			head->value = fmodl(head->value, number);
 		}
 
@@ -144,6 +118,97 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			head->value = factorial(head->value);
 			incrementBuff(jac,1);
+		}
+
+		else if (strncmp(jac->buf, "asinhl", 6) == 0)
+		{
+			incrementBuff(jac,6);
+			number = evaluateFunc(jac, ASINH);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "asin", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, ASIN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "atan", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, ATAN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "acos", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, ACOS);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "sqrt", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, SQRT);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "sinh", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, SINH);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "cosh", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, COSH);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "tanh", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, TANH);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "cos", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, COS);
+			add_item(&head, number);
+		}
+		
+		else if (strncmp(jac->buf, "sin", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, SIN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "tan", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, TAN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "log", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, LOG);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "ln", 2) == 0)
+		{
+			incrementBuff(jac,2);
+			number = evaluateFunc(jac, LN);
+			add_item(&head, number);
 		}
 
 		else if (strncmp(jac->buf, "e_0", 3) == 0) 		/* Permittivity of free space */
@@ -177,19 +242,26 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			add_item(&head, AVOGADRO);
 			incrementBuff(jac,3);
-		}	
-
-		else if (*jac->buf == 'k')  	/* Boltzmann's constant */
-		{
-			add_item(&head, K_B);
-			incrementBuff(jac,1);
 		}
 
-		/* Parsing for functions like sin, cos, etc */
-
-		else if ((function = searchFunction(jac)) != NONE)
+		else if (strncmp(jac->buf, "bin_dec", 7) == 0)
 		{
-			number = evaluateFuncResult(jac, function);
+			incrementBuff(jac,7);
+			number = evaluateFunc(jac, BIN_DEC);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "dec_bin", 7) == 0)
+		{
+			incrementBuff(jac,7);
+			number = evaluateFunc(jac, DEC_BIN);
+			add_item(&head, number);
+		}
+
+		else if (strncmp(jac->buf, "cbrt", 4) == 0)
+		{
+			incrementBuff(jac,4);
+			number = evaluateFunc(jac, CBRT);
 			add_item(&head, number);
 		}
 
@@ -197,6 +269,19 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			add_item(&head, M_PIl);
 			incrementBuff(jac,2);
+		}
+
+		else if (strncmp(jac->buf, "abs", 3) == 0)
+		{
+			incrementBuff(jac,3);
+			number = evaluateFunc(jac, ABS);
+			add_item(&head, number);
+		}
+
+		else if (*jac->buf == 'k')  	/* Boltzmann's constant */
+		{
+			add_item(&head, K_B);
+			incrementBuff(jac,1);
 		}
 
 		else if (isalpha(*jac->buf)) 	/* Syntax error */
@@ -331,17 +416,30 @@ void delNextNode (struct node *head)
 	free(tmp);
 }
 
-long double evaluateFuncResult (struct control *jac, enum functions func)
+long double evaluateFunc (struct control *jac, enum functions func)
 {
 	long double number;
+	unsigned int n = 0;
 
-	jac->inFunc = true;
+    if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
+    {
+    	incrementBuff(jac,n);
+		return switchFunc(&func, &number);
+	}
 
-	number = parse_evaluate_expr(jac);
+	else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')
+	{
+		jac->caller = true;					 /* indicates recursive call */
+		incrementBuff(jac,1);
+		number = parse_evaluate_expr(jac);   /* Evaluate expression inside parenthesis */
+		return switchFunc(&func, &number);
+	}
 
-	jac->inFunc = false;
-
-	return switchFunc(&func, &number);
+	else
+	{
+		jac->failure = true;
+		return false;
+	}
 }
 
 long double switchFunc(enum functions *func, long double *number)
@@ -356,7 +454,7 @@ long double switchFunc(enum functions *func, long double *number)
 
 		case TAN:
 			return tanl(*number);
-
+			
 		case EXP:
 			return *number;
 
@@ -371,6 +469,7 @@ long double switchFunc(enum functions *func, long double *number)
 
 		case TANH:
 			return tanhl(*number);
+			break;
 
 		case ASINH:
 			return asinhl(*number);
@@ -423,8 +522,8 @@ static void reverse(struct node** head_ref)
     struct node* current = *head_ref;
     struct node* next = NULL;
 
-    while (current != NULL)
-	{
+    while (current != NULL) {
+
         /* Store next */
         next = current->next;
  
@@ -435,113 +534,5 @@ static void reverse(struct node** head_ref)
         prev = current;
         current = next;
     }
-
     *head_ref = prev;
-}
-
-enum functions searchFunction (struct control *jac)
-{
-		if (strncmp(jac->buf, "cos", 3) == 0)
-		{
-			incrementBuff(jac,3);
-			return COS;
-		}
-		
-		else if (strncmp(jac->buf, "sin", 3) == 0)
-		{
-			incrementBuff(jac,3);
-			return SIN;
-		}
-
-		else if (strncmp(jac->buf, "asinhl", 6) == 0)
-		{
-			incrementBuff(jac,6);
-			return ASINH;
-		}
-
-		else if (strncmp(jac->buf, "asin", 4) == 0)
-		{
-			incrementBuff(jac,4);
-			return ASIN;
-		}
-
-		else if (strncmp(jac->buf, "atan", 4) == 0)
-		{
-			incrementBuff(jac,4);
-			return ATAN;
-		}
-
-		else if (strncmp(jac->buf, "acos", 4) == 0)
-		{
-			incrementBuff(jac,4);
-			return ACOS;
-		}
-
-		else if (strncmp(jac->buf, "sqrt", 4) == 0)
-		{
-			incrementBuff(jac,4);
-			return SQRT;
-		}
-
-		else if (strncmp(jac->buf, "sinh", 4) == 0)
-		{
-			incrementBuff(jac,4);
-			return SINH;
-		}
-
-		else if (strncmp(jac->buf, "cosh", 4) == 0)
-		{
-			incrementBuff(jac,4);
-			return COSH;
-		}
-
-		else if (strncmp(jac->buf, "tanh", 4) == 0)
-		{
-			incrementBuff(jac,4);
-			return TANH;
-		}
-
-		else if (strncmp(jac->buf, "tan", 3) == 0)
-		{
-			incrementBuff(jac,3);
-			return TAN;
-		}
-
-		else if (strncmp(jac->buf, "log", 3) == 0)
-		{
-			incrementBuff(jac,3);
-			return LOG;
-		}
-
-		else if (strncmp(jac->buf, "ln", 2) == 0)
-		{
-			incrementBuff(jac,2);
-			return LN;
-		}
-
-		else if (strncmp(jac->buf, "bin_dec", 7) == 0)
-		{
-			incrementBuff(jac,7);
-			return BIN_DEC;
-		}
-
-		else if (strncmp(jac->buf, "dec_bin", 7) == 0)
-		{
-			incrementBuff(jac,7);
-			return DEC_BIN;
-		}
-
-		else if (strncmp(jac->buf, "cbrt", 4) == 0)
-		{
-			incrementBuff(jac,4);
-			return CBRT;
-		}
-
-		else if (strncmp(jac->buf, "abs", 3) == 0)
-		{
-			incrementBuff(jac,3);
-			return ABS;
-		}
-
-		return NONE;
 }
