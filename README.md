@@ -121,6 +121,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 git clone https://github.com/gioretikto/jac.git
 cd jac
 make
+sudo make install
 ```
 
 <h3>Contacts</h3>
