@@ -288,16 +288,13 @@ long double calculate (struct node *head)
 
 	while (tmp->next != NULL && tmp->op != TAIL_OP)
 	{
-		if (tmp->op == '/')
+		if (tmp->op == '/' || tmp->op == '*')
 		{
-			tmp->value = tmp->value / tmp->next->value;
+			if (tmp->op  == '/')
+				tmp->value = tmp->value / tmp->next->value;
 
-			delNextNode(tmp);
-		}
-
-		else if (tmp->op == '*')
-		{
-			tmp->value = tmp->value * tmp->next->value;
+			else
+				tmp->value = tmp->value * tmp->next->value;
 
 			delNextNode(tmp);
 		}
