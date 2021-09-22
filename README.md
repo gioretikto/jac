@@ -49,7 +49,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>If you pass the expression at the command line, please be mindful that bash treats parenthesis as special charachters therefore escaping is needed:</p>
 
-<pre>jac "4+4.5-(34/(8*3-3))"</pre>
+<pre>jac '4+4.5-(34/(8*3-3))'</pre>
 
 <p>The syntax for other mathematical operators is the following</p>
 
