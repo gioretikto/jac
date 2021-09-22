@@ -1,4 +1,4 @@
-<h1>JAC 1.3.5 - Scientific command line calculator</h1>
+<h1>JAC 1.3.6 - Scientific command line calculator</h1>
 
 <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
@@ -17,11 +17,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <pre>sin pi + 2 + 5 = 7</pre>
 
-<pre>sin (pi/2 + 2 + 5) = 0.7539022543433</pre>
+<pre>sin (pi/2 + 3 + 5) = -0.1455000338086135254</pre>
+
+<pre>sin (pi/2 + 3 + 5)/2 = -0.07275001690430676268</pre>
 
 <p>Evaluation of the rest energy of the electron</p>
 
-<pre>m_e * m_0 = 8.187105776823886314e-14</pre>
+<pre>m_e * c_0^2 = 8.187105776823886314e-14</pre>
 
 <p>You can use scientific notation by using the capital "E", since "e" indicates Euler's number.</p>
 

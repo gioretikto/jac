@@ -1,6 +1,12 @@
-/* jac v.1.3.5 - Giovanni Resta 29/05/2020 */
+/* jac v.1.3.7 - Giovanni Resta 29/05/2020 */
 
 #include "jac.h"
+
+long double parse_evaluate_expr(struct control *jac);
+void print_result(long double x);
+void remove_spaces(char *str);
+bool areParenthesisBalanced(char *exp);
+bool checkSyntax(char *str);
 
 int main(int argc, char* argv[])
 {
@@ -46,7 +52,6 @@ int main(int argc, char* argv[])
 
 		else
 		{
-
 			jac.buf = line;
 
 			remove_spaces(jac.buf);
