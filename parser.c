@@ -284,7 +284,7 @@ long double calculate (struct node *head)
 {
 	struct node *tmp = head;
 
-	/* divide first */
+	/* divide and multiply first */
 
 	while (tmp->next != NULL && tmp->op != TAIL_OP)
 	{
@@ -295,17 +295,7 @@ long double calculate (struct node *head)
 			delNextNode(tmp);
 		}
 
-		else
-			tmp = tmp->next;
-	}
-
-	tmp = head;
-
-	/* then multiply */
-
-	while (tmp->next != NULL && tmp->op != TAIL_OP)
-	{
-		if (tmp->op == '*')
+		else if (tmp->op == '*')
 		{
 			tmp->value = tmp->value * tmp->next->value;
 
