@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include <stdlib.h>
 #include <stdbool.h>
 
 #define MAX 1000
@@ -19,13 +18,6 @@
 #define M_E 2.71828182845904523536028747135266249775L
 #endif
 
-struct node{
-	long double value;
-	char op;
-	struct node *next;
-	char unary;
-};
-
 struct control{
 	char *buf;
 	int len;
@@ -34,13 +26,3 @@ struct control{
 	bool bracketsFunc;
 	bool failure;
 };
-
-void print_result(long double x);
-void remove_spaces(char *str);
-
-unsigned long factorial(unsigned long f);
-long double parse_evaluate_expr(struct control *jac);
-bool areParenthesisBalanced(char *exp);
-bool checkSyntax(char *str);
-bool checkPar (struct control *jac, struct node *head);
-void incrementBuff (struct control *jac, int n);

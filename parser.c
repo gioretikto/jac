@@ -1,4 +1,5 @@
 #include "jac.h"
+#include "lists.h"
 #include <math.h>
 
 #define TAIL_OP 'x' /* Operator of the tail node */
@@ -9,14 +10,19 @@
 
 enum functions {NONE, SIN, COS, TAN, ASIN, ACOS, ATAN, EXP, LOG, LN, SQRT, SINH, COSH, TANH, ASINH, ABS, MOD, CBRT, BIN_DEC, DEC_BIN};
 
+void reverse(struct node** head_ref);
 void add_item (struct node **ptr, long double data);
-static void reverse(struct node** head_ref);
 void delNextNode (struct node *node_pt);
-void calculate (struct node *head);
+
+long double calculate (struct node *head);
 long double evaluateFuncResult (struct control *jac, enum functions func);
 long double switchFunc(enum functions *func, long double *number);
+void incrementBuff (struct control *jac, int n);
+
+unsigned long factorial(unsigned long f);
 int bin_dec(long long n);
 long long dec_bin(int n);
+
 enum functions searchFunction (struct control *jac);
 
 long double parse_evaluate_expr(struct control *jac)
@@ -38,22 +44,30 @@ long double parse_evaluate_expr(struct control *jac)
 			if (head == NULL && *jac->buf == '-')
 			{
 				add_item(&head, -1);
+
 				head->op = '*';
 			}
 
-			else if (jac->inFunc == true && head != NULL && jac->bracketsFunc == false)
+			else if (jac->inFunc == true && jac->bracketsFunc == false)
 			{
-				if (*jac->buf == '-' || *jac->buf == '+' )
+				if (*jac->buf == '+' || *jac->buf == '-')
 				{
-					printf("expr is: %Lf\n", head->value);
 					reverse(&head);
-					calculate(head);
-					return head->value;
+					
+					return calculate(head);
+				}
+
+				else{
+					printf("OKI, op = %c \n", *jac->buf);
+
+					head->op = *jac->buf;
 				}
 			}
 
-			else
+			else{
+				printf("OK, op = %c \n", *jac->buf);
 				head->op = *jac->buf;
+			}
 
 			incrementBuff(jac,1);
 		}
@@ -61,6 +75,7 @@ long double parse_evaluate_expr(struct control *jac)
 		if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
 		{
  			add_item(&head, number);
+			printf("numer read is: %Lf\n", head->value);
 			incrementBuff(jac,n);
 		}
 
@@ -71,12 +86,10 @@ long double parse_evaluate_expr(struct control *jac)
 			if (jac->inFunc == true)
 				jac->bracketsFunc = true;
 
-			else
+			else{
 				jac->insideBrackets = true;
-
-			number = parse_evaluate_expr(jac);   /* Recursive call: evaluate expression inside parenthesis */
-
-			add_item(&head, number);
+				add_item(&head, parse_evaluate_expr(jac));
+			}
 		}
 
 		else if (*jac->buf == ')' || *jac->buf == ']' || *jac->buf == '}')
@@ -85,11 +98,12 @@ long double parse_evaluate_expr(struct control *jac)
 
 			if (jac->bracketsFunc == true)
 			{
+				printf("Leaving parent\n");
 				jac->bracketsFunc = false;
-				printf("expr is: %Lf\n", head->value);
 				reverse(&head);
-				calculate(head);
-				return head->value;
+				number = calculate(head);
+				printf("Result par: %Lf\n", head->value);
+				return number;
 			}
 
 			else
@@ -134,15 +148,15 @@ long double parse_evaluate_expr(struct control *jac)
 		else if (*jac->buf == '^')
 		{
 			incrementBuff(jac,1);
-			number = evaluateFuncResult(jac, EXP);
-			head->value = pow(head->value, number);
+			jac->inFunc = true;
+			head->value = pow(head->value, evaluateFuncResult(jac, EXP));
 		}
 
 		else if (*jac->buf == '%')
 		{
 			incrementBuff(jac,1);
-			number = evaluateFuncResult(jac, MOD);
-			head->value = fmodl(head->value, number);
+			jac->inFunc = true;
+			head->value = fmodl(head->value, evaluateFuncResult(jac, MOD));
 		}
 
 		else if (*jac->buf == '!') 	/* Factorial */
@@ -161,7 +175,7 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			add_item(&head, 10);
 			incrementBuff(jac,1);
-			
+
 			if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
 			{
 				incrementBuff(jac,n);
@@ -194,14 +208,14 @@ long double parse_evaluate_expr(struct control *jac)
 
 		else if ((function = searchFunction(jac)) != NONE)
 		{
-			number = evaluateFuncResult(jac, function);
-
-			add_item(&head, number);
+			jac->inFunc = true;
+			add_item(&head, evaluateFuncResult(jac, function));
 		}
 
 		else if (strncmp(jac->buf, "pi", 2) == 0)
 		{
 			add_item(&head, M_PIl);
+			printf("numer read is: %Lf\n", head->value);
 			incrementBuff(jac,2);
 		}
 
@@ -248,9 +262,13 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			reverse(&head);
 			calculate(head);
+			result = head->value;
 		}
 
-		result = head->value;
+		else
+		{
+			result = head->value;
+		}
 
 		free(head);
 
@@ -260,17 +278,20 @@ long double parse_evaluate_expr(struct control *jac)
 	return 0;
 }
 
-void add_item (struct node **ptr, long double data)
+long double evaluateFuncResult (struct control *jac, enum functions func)
 {
-	struct node *new_item = malloc(sizeof *new_item);
+	long double number;
 
-	new_item->value = data;
-	new_item->next = *ptr;
-	new_item->op = '*';
-	*ptr = new_item;
+	number = parse_evaluate_expr(jac);
+
+	jac->inFunc = false;
+
+	number = switchFunc(&func, &number);
+
+	return number;
 }
 
-void calculate (struct node *head)
+long double calculate (struct node *head)
 {
 	struct node *tmp = head;
 
@@ -297,7 +318,6 @@ void calculate (struct node *head)
 	{
 		if (tmp->op == '*')
 		{
-
 			tmp->value = tmp->value * tmp->next->value;
 
 			delNextNode(tmp);
@@ -327,27 +347,8 @@ void calculate (struct node *head)
 		else
 			tmp = tmp->next;
 	}
-}
 
-void delNextNode (struct node *head)
-{
-	struct node *tmp = head->next;
-	head->op = head->next->op;
-	head->next = head->next->next;
-	free(tmp);
-}
-
-long double evaluateFuncResult (struct control *jac, enum functions func)
-{
-	long double number;
-
-	jac->inFunc = true;
-
-	number = parse_evaluate_expr(jac);
-
-	jac->inFunc = false;
-
-	return switchFunc(&func, &number);
+	return head->value;
 }
 
 long double switchFunc(enum functions *func, long double *number)
@@ -355,6 +356,7 @@ long double switchFunc(enum functions *func, long double *number)
 	switch (*func)
 	{
 		case SIN:
+			printf("sin value: %Lf\n", *number);
 			return sinl(*number);
 
 		case COS:
@@ -412,7 +414,7 @@ long double switchFunc(enum functions *func, long double *number)
 			return cbrtl(*number);
 
 	    default:
-			return false;
+			return -2;
 	}
 }
 
@@ -420,29 +422,6 @@ void incrementBuff (struct control *jac, int n)
 {
 	jac->buf += n;
 	jac->len += n;
-}
-
-/* Function to reverse the linked list */
-static void reverse(struct node** head_ref)
-{
-    struct node* prev = NULL;
-    struct node* current = *head_ref;
-    struct node* next = NULL;
-
-    while (current != NULL)
-	{
-        /* Store next */
-        next = current->next;
- 
-        /* Reverse current node's pointer */
-        current->next = prev;
- 
-        /* Move pointers one position ahead */
-        prev = current;
-        current = next;
-    }
-
-    *head_ref = prev;
 }
 
 enum functions searchFunction (struct control *jac)

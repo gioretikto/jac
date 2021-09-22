@@ -1,4 +1,5 @@
 #include "jac.h"
+#include "lists.h"
 
 struct charNode
 {
