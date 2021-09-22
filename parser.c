@@ -53,7 +53,7 @@ long double parse_evaluate_expr(struct control *jac)
 				if (*jac->buf == '+' || *jac->buf == '-')
 				{
 					reverse(&head);
-					
+
 					return calculate(head);
 				}
 
@@ -81,7 +81,7 @@ long double parse_evaluate_expr(struct control *jac)
 			if (jac->inFunc == true)
 				jac->bracketsFunc = true;
 
-			else{
+			else {
 				jac->insideBrackets = true;
 				add_item(&head, parse_evaluate_expr(jac));
 			}
@@ -95,8 +95,7 @@ long double parse_evaluate_expr(struct control *jac)
 			{
 				jac->bracketsFunc = false;
 				reverse(&head);
-				number = calculate(head);
-				return number;
+				return calculate(head);
 			}
 
 			else
@@ -278,9 +277,7 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 
 	jac->inFunc = false;
 
-	number = switchFunc(&func, &number);
-
-	return number;
+	return switchFunc(&func, &number);
 }
 
 long double calculate (struct node *head)
