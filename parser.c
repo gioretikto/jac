@@ -57,15 +57,11 @@ long double parse_evaluate_expr(struct control *jac)
 					return calculate(head);
 				}
 
-				else{
-					printf("OKI, op = %c \n", *jac->buf);
-
+				else
 					head->op = *jac->buf;
-				}
 			}
 
 			else{
-				printf("OK, op = %c \n", *jac->buf);
 				head->op = *jac->buf;
 			}
 
@@ -75,7 +71,6 @@ long double parse_evaluate_expr(struct control *jac)
 		if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
 		{
  			add_item(&head, number);
-			printf("numer read is: %Lf\n", head->value);
 			incrementBuff(jac,n);
 		}
 
@@ -98,11 +93,9 @@ long double parse_evaluate_expr(struct control *jac)
 
 			if (jac->bracketsFunc == true)
 			{
-				printf("Leaving parent\n");
 				jac->bracketsFunc = false;
 				reverse(&head);
 				number = calculate(head);
-				printf("Result par: %Lf\n", head->value);
 				return number;
 			}
 
@@ -215,7 +208,6 @@ long double parse_evaluate_expr(struct control *jac)
 		else if (strncmp(jac->buf, "pi", 2) == 0)
 		{
 			add_item(&head, M_PIl);
-			printf("numer read is: %Lf\n", head->value);
 			incrementBuff(jac,2);
 		}
 
@@ -356,7 +348,6 @@ long double switchFunc(enum functions *func, long double *number)
 	switch (*func)
 	{
 		case SIN:
-			printf("sin value: %Lf\n", *number);
 			return sinl(*number);
 
 		case COS:
