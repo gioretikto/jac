@@ -1,4 +1,4 @@
-/* jac v.1.3.7 - Giovanni Resta 29/05/2020 */
+/* jac v.1.3.8 - Giovanni Resta 23/09/2021 */
 
 #include "jac.h"
 
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
 	jac.len = 0;
 	jac.insideBrackets = false;
-	jac.inFunc = false;
+	jac.inFunc = NONE;
 	jac.bracketsFunc = false;
 	jac.failure = false;
 
