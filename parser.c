@@ -20,6 +20,7 @@ void incrementBuff (struct control *jac, int n);
 unsigned long factorial(unsigned long f);
 int bin_dec(long long n);
 long long dec_bin(int n);
+long double parseConstants(struct control *jac);
 
 enum functions searchFunction (struct control *jac);
 
@@ -105,71 +106,6 @@ long double parse_evaluate_expr(struct control *jac)
 		}
 	}
 
-		/* Start parsing for constants */
-
-		else if (strncmp(jac->buf, "m_p", 3) == 0) 		/* Proton Mass */
-		{
-			add_item(&head, PROTON_MASS);
-			incrementBuff(jac,3);
-		}
-
-		else if (*jac->buf == 'e')
-		{
-			add_item(&head, M_E);
-			incrementBuff(jac,1);
-		}
-
-		else if (strncmp(jac->buf, "m_e", 3) == 0) 		/* Electron mass */
-		{
-			add_item(&head, ELECTRON_MASS);
-			incrementBuff(jac,3);
-		}
-
-		else if (strncmp(jac->buf, "c_0", 3) == 0)  	/* Speed of light in vacuum m/s (exact) */
-		{
-			add_item(&head, SPEED_LIGHT);
-			incrementBuff(jac,3);
-		}
-
-		else if (*jac->buf == 'q')						/* elementary charge*/
-		{
-			add_item(&head, CHARGE);
-			incrementBuff(jac,1);		
-		}
-
-		else if (*jac->buf == 'h')						/* Plank's constant*/
-		{
-			add_item(&head, PLANK);
-			incrementBuff(jac,1);
-		}
-
-		else if (strncmp(jac->buf, "e_0", 3) == 0) 		/* Permittivity of free space */
-		{
-			add_item(&head, E_0);
-			incrementBuff(jac,3);
-		}
-
-		else if (strncmp(jac->buf, "pi", 2) == 0)
-		{
-			if (jac->inFunc == POW)
-				return M_PIl;
-
-			add_item(&head, M_PIl);
-			incrementBuff(jac,2);
-		}
-
-		else if (strncmp(jac->buf, "n_a", 3) == 0)  /* Avogadros's number */
-		{
-			add_item(&head, AVOGADRO);
-			incrementBuff(jac,3);
-		}	
-
-		else if (*jac->buf == 'k')  	/* Boltzmann's constant */
-		{
-			add_item(&head, K_B);
-			incrementBuff(jac,1);
-		}
-
 		else if (*jac->buf == '^')
 		{
 			incrementBuff(jac,1);
@@ -215,9 +151,22 @@ long double parse_evaluate_expr(struct control *jac)
 
 		else if (isalpha(*jac->buf)) 	/* Syntax error */
 		{
-			jac->failure = true;
-			fprintf(stderr,"Illegal character %s\n", jac->buf);
-			return 0;
+			/* Parse for constants */
+
+			if ((number = parseConstants(jac)) != 0)
+			{
+				if (jac->inFunc == POW)
+					return number;
+				else
+					add_item(&head, number);
+			}
+
+			else
+			{
+				jac->failure = true;
+				fprintf(stderr,"Illegal character %s\n", jac->buf);
+				return 0;
+			}
 		}
 
 		else
@@ -268,6 +217,78 @@ long double parse_evaluate_expr(struct control *jac)
 	}
 
 	return 0;
+}
+
+long double parseConstants(struct control *jac)
+{
+	int incrBuff = 0;
+	long double data = 0;
+
+		if (strncmp(jac->buf, "pi", 2) == 0)
+		{
+			data = M_PIl;
+			incrBuff = 2;
+		}
+
+		else if (strncmp(jac->buf, "m_p", 3) == 0) 		/* Proton Mass */
+		{
+			data = PROTON_MASS;
+			incrBuff = 3;
+		}
+
+		else if (*jac->buf == 'e')
+		{
+			data = M_E;
+			incrBuff = 1;
+		}
+
+		else if (strncmp(jac->buf, "m_e", 3) == 0) 		/* Electron mass */
+		{
+			data = ELECTRON_MASS;
+			incrBuff = 3;
+		}
+
+		else if (strncmp(jac->buf, "c_0", 3) == 0)  	/* Speed of light in vacuum m/s (exact) */
+		{
+			data = SPEED_LIGHT;
+			incrBuff = 3;
+		}
+
+		else if (*jac->buf == 'q')						/* elementary charge*/
+		{
+			data = CHARGE;
+			incrBuff = 1;
+		}
+
+		else if (*jac->buf == 'h')						/* Plank's constant*/
+		{
+			data = PLANK;
+			incrBuff = 1;
+		}
+
+		else if (strncmp(jac->buf, "e_0", 3) == 0) 		/* Permittivity of free space */
+		{
+			data = E_0;
+			incrBuff = 3;
+		}
+
+		else if (strncmp(jac->buf, "n_a", 3) == 0)  /* Avogadros's number */
+		{
+			data = AVOGADRO;
+			incrBuff = 3;
+		}	
+
+		else if (*jac->buf == 'k')  	/* Boltzmann's constant */
+		{
+			data = K_B;
+			incrBuff = 1;
+		}
+
+		else
+			return data;
+
+		incrementBuff(jac,incrBuff);
+		return data;
 }
 
 long double evaluateFuncResult (struct control *jac, enum functions func)
