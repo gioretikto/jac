@@ -1,4 +1,4 @@
-<h1>JAC 1.3.6 - Scientific command line calculator</h1>
+<h1>JAC 1.3.7 - Scientific command line calculator</h1>
 
 <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
@@ -49,7 +49,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>If you pass the expression at the command line, please be mindful that bash treats parenthesis as special charachters therefore escaping is needed:</p>
 
-<pre>jac "4+4.5-(34/(8*3-3))"</pre>
+<pre>jac '4+4.5-(34/(8*3-3))'</pre>
 
 <p>The syntax for other mathematical operators is the following</p>
 
@@ -121,6 +121,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 git clone https://github.com/gioretikto/jac.git
 cd jac
 make
+sudo make install
 ```
 
 <h3>Contacts</h3>

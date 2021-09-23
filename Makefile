@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -ggdb3
 
 ifeq ($(SYSTEM), SunOS)
 	CFLAGS+= -D__EXTENSIONS__

@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
 	jac.len = 0;
 	jac.insideBrackets = false;
-	jac.inFunc = false;
+	jac.inFunc = NONE;
 	jac.bracketsFunc = false;
 	jac.failure = false;
 

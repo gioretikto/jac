@@ -149,15 +149,6 @@ long double parse_evaluate_expr(struct control *jac)
 			incrementBuff(jac,3);
 		}
 
-		else if (strncmp(jac->buf, "pi", 2) == 0)
-		{
-			if (jac->inFunc == POW)
-				return M_PIl;
-
-			add_item(&head, M_PIl);
-			incrementBuff(jac,2);
-		}
-
 		else if (strncmp(jac->buf, "n_a", 3) == 0)  /* Avogadros's number */
 		{
 			add_item(&head, AVOGADRO);
@@ -211,6 +202,15 @@ long double parse_evaluate_expr(struct control *jac)
 		{
 			jac->inFunc = function;
 			add_item(&head, evaluateFuncResult(jac, function));
+		}
+
+		else if (strncmp(jac->buf, "pi", 2) == 0)
+		{
+			if (jac->inFunc == POW)
+				return M_PIl;
+
+			add_item(&head, M_PIl);
+			incrementBuff(jac,2);
 		}
 
 		else if (isalpha(*jac->buf)) 	/* Syntax error */
