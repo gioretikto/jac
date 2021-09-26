@@ -44,7 +44,11 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 
 		 	add_item(&head, number);
 
+<<<<<<< HEAD
 			if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{' || isalpha(*jac->buf))			
+=======
+			if (*jac->buf == '(' || isalpha(*jac->buf))			/* For situations like 5(3+2) or 5ln2*/
+>>>>>>> 0b9161671f37d0409827757b139ad9ef39478982
 				head->op = '*';			
 		}
 
@@ -62,12 +66,17 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 		else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')
 		{
 			incrementBuff(jac,1);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0b9161671f37d0409827757b139ad9ef39478982
 			add_item(&head, parse_evaluate_expr(jac, inFunc));
 		}
 
 		else if (*jac->buf == ')' || *jac->buf == ']' || *jac->buf == '}')
 		{
 			incrementBuff(jac,1);
+<<<<<<< HEAD
 
 			if (*jac->buf != '\0')										/* For situations like (3+2)5 */
 				if (isalpha(*jac->buf) || isdigit(*jac->buf))
@@ -76,6 +85,11 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 			reverse(&head);
 			number = calculate(head);
 
+=======
+			reverse(&head);
+			number = calculate(head);
+
+>>>>>>> 0b9161671f37d0409827757b139ad9ef39478982
 			if (inFunc == true){
 				free(head);
 				return number;
@@ -96,8 +110,15 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 			else if ((number = parseConstants(jac)) != 0)
 			{
 				if (inFunc == true) {
+<<<<<<< HEAD
 					searchPowFunction(jac, &number);
 					return number;
+=======
+
+					searchPowFunction(jac, &number);
+					return number;
+
+>>>>>>> 0b9161671f37d0409827757b139ad9ef39478982
 				}
 
 				else
@@ -151,6 +172,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 		jac->failure = true;
 	}
 
+<<<<<<< HEAD
 	if (jac->failure == true)
 	{
 		free(head);
@@ -162,6 +184,18 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 		reverse(&head);
 		number = calculate(head);
 		free(head);
+=======
+	if (jac->failure == true) {
+		free(head);
+		return -2;
+	}
+
+	else
+	{
+		reverse(&head);
+		number = calculate(head);
+		free(head);
+>>>>>>> 0b9161671f37d0409827757b139ad9ef39478982
 		return number;
 	}
 }
