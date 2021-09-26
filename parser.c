@@ -21,152 +21,111 @@ unsigned long factorial(unsigned long f);
 int bin_dec(long long n);
 long long dec_bin(int n);
 long double parseConstants(struct control *jac);
+bool searchBinaryFunction (struct control *jac, struct node *head);
+bool searchPowFunction (struct control *jac, long double *number);
 
 enum functions searchFunction (struct control *jac);
 
-long double parse_evaluate_expr(struct control *jac)
+long double parse_evaluate_expr(struct control *jac, bool inFunc)
 {
-	long double number, result;
+	long double number;
 
 	unsigned int n = 0;
 
 	struct node *head = NULL;
 
-	enum functions function;
+	enum functions func = NONE;
 
 	while (jac->len < MAX && *jac->buf != '\0')
-	{	
-		/* Read operator first; you don't want to read -5 and loose the - */
-
-		if (*jac->buf == '/' || *jac->buf == '*' || *jac->buf == '+' || *jac->buf == '-')	/* Add new item when you encounter an operator */
-		{
-			if (head == NULL && *jac->buf == '-')
-			{
-				add_item(&head, -1);
-				head->op = '*';
-			}
-
-			else if (jac->inFunc != NONE  && jac->bracketsFunc == false)
-			{
-				if (head != NULL)
-				{
-					reverse(&head);
-					return calculate(head);
-				}
-
-				else
-					head->op = *jac->buf;
-			}
-
-			else
-				head->op = *jac->buf;
-
-			incrementBuff(jac,1);
-		}
-
+	{
 		if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
 		{
 			incrementBuff(jac,n);
 
-			if ( (jac->inFunc == POW || jac->inFunc == MOD) && jac->bracketsFunc == false)
-				return number;
+		 	add_item(&head, number);
+
+			if (*jac->buf == '(' || isalpha(*jac->buf))			/* For situations like 5(3+2) or 5ln2*/
+				head->op = '*';			
+		}
+
+		else if (*jac->buf == '-' || *jac->buf == '+')			/* Important for situation like -(5+3) which jac translates into -1*(5+3) */
+		{
+			if (*jac->buf == '-')
+			 	add_item(&head, -1);
 			else
-			 	add_item(&head, number);
+				add_item(&head, 1);
+
+			incrementBuff(jac,1);
+			head->op = '*';
 		}
 
 		else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')
 		{
 			incrementBuff(jac,1);
 
-			if (jac->inFunc != NONE)
-				jac->bracketsFunc = true;
-
-			else
-			{
-				jac->insideBrackets = true;
-				add_item(&head, parse_evaluate_expr(jac));
-			}
+			add_item(&head, parse_evaluate_expr(jac, inFunc));
 		}
 
 		else if (*jac->buf == ')' || *jac->buf == ']' || *jac->buf == '}')
 		{
 			incrementBuff(jac,1);
+			reverse(&head);
+			number = calculate(head);
 
-			if (jac->bracketsFunc != NONE)
-			{
-				jac->bracketsFunc = false;
-				reverse(&head);
-				return calculate(head);
-			}
-
-			else
-			{
-				jac->insideBrackets = false;
-				break;
+			if (inFunc == true){
+				free(head);
+				return number;
 			}
 		}
 
-		else if (*jac->buf == '^')
+		else if(searchBinaryFunction(jac, head))
+			;
+
+		else if (isalpha(*jac->buf))
 		{
-			incrementBuff(jac,1);
-			jac->inFunc = POW;
-			head->value = pow(head->value, evaluateFuncResult(jac, POW));
-		}
+			/* Parsing for functions like sin, cos, etc */
 
-		else if (*jac->buf == '%')
-		{
-			incrementBuff(jac,1);
-			jac->inFunc = MOD;
-			head->value = fmodl(head->value, evaluateFuncResult(jac, MOD));
-		}
+			if ((func = searchFunction(jac)) != NONE)
+				add_item(&head, evaluateFuncResult(jac, func));
 
-		else if (*jac->buf == '!') 	/* Factorial */
-		{
-			head->value = factorial(head->value);
-			incrementBuff(jac,1);
-		}
-
-		else if (*jac->buf == 'E')
-		{
-			add_item(&head, 10);
-			incrementBuff(jac,1);
-
-			if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
-			{
-				incrementBuff(jac,n);
-				head->value = pow(head->value, number);
-			}
-
-			else
-				jac->failure = true;
-		}
-
-		/* Parsing for functions like sin, cos, etc */
-
-		else if ((function = searchFunction(jac)) != NONE)
-		{
-			jac->inFunc = function;
-			add_item(&head, evaluateFuncResult(jac, function));
-		}
-
-		else if (isalpha(*jac->buf)) 	/* Syntax error */
-		{
 			/* Parse for constants */
-
-			if ((number = parseConstants(jac)) != 0)
+			else if ((number = parseConstants(jac)) != 0)
 			{
-				if ((jac->inFunc == POW || jac->inFunc == MOD) && jac->bracketsFunc == false)
+				if (inFunc == true) {
+
+					searchPowFunction(jac, &number);
 					return number;
 
+				}
+
 				else
+				{
 					add_item(&head, number);
+
+					if (*jac->buf == '(')		/* For situations like 5(3+2) */
+						head->op = '*';
+				}
 			}
 
-			else
+			else if (*jac->buf == 'E')
+			{
+				add_item(&head, 10);
+				incrementBuff(jac,1);
+
+				if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
+				{
+					incrementBuff(jac,n);
+					head->value = pow(head->value, number);
+				}
+
+				else 
+					jac->failure = true;
+			}
+			
+			else 				/* Syntax error */
 			{
 				jac->failure = true;
 				fprintf(stderr,"Illegal character %s\n", jac->buf);
-				return 0;
 			}
 		}
 
@@ -175,54 +134,38 @@ long double parse_evaluate_expr(struct control *jac)
 
 	} /* End of parsing */
 
-	/* Once parsed jac evaluates the expression */
+	/* Once parsed, jac evaluates the expression */
 
-	if (jac->failure == true)
-		return 0;
-
-	if (jac->len == MAX)
+	if (head == NULL)
 	{
-		fprintf(stderr,"%s\n","The limit size of the expression was reached");
-
-		if (head != NULL)
-			free(head);
-
 		jac->failure = true;
-
 		return -2;
 	}
 
-	else if (head == NULL)
+	if (jac->len >= MAX)
 	{
+		fprintf(stderr,"%s\n","The limit size of the expression was reached");
+
 		jac->failure = true;
+	}
+
+	if (jac->failure == true) {
+		free(head);
 		return -2;
 	}
 
 	else
 	{
-		head->op = TAIL_OP;
-
-		if (head->next != NULL)
-		{
-			reverse(&head);
-			calculate(head);
-			result = head->value;
-		}
-
-		else
-			result = head->value;
-
+		reverse(&head);
+		number = calculate(head);
 		free(head);
-
-		return result;
+		return number;
 	}
-
-	return 0;
 }
 
 long double parseConstants(struct control *jac)
 {
-	int incrBuff = 0;
+	unsigned int incrBuff = 0;
 	long double data = 0;
 
 	if (strncmp(jac->buf, "pi", 2) == 0)
@@ -289,35 +232,164 @@ long double parseConstants(struct control *jac)
 		return data;
 
 	incrementBuff(jac,incrBuff);
+
 	return data;
 }
 
 long double evaluateFuncResult (struct control *jac, enum functions func)
 {
 	long double number;
+	unsigned int n;
 
-	number = parse_evaluate_expr(jac);
+	if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
+	{
+		incrementBuff(jac,n);
 
-	jac->inFunc = NONE;
+		while(searchPowFunction(jac, &number))
+			{;}
+	
+		return switchFunc(&func, &number);
+	}
+
+	/* Parse for constants */
+	else if ((number = parseConstants(jac)) != 0)
+		{
+			while(searchPowFunction(jac, &number))
+				{;}
+		}
+
+	else
+		number = parse_evaluate_expr(jac, true);
 
 	return switchFunc(&func, &number);
+}
+
+unsigned int searchFunction (struct control *jac)
+{
+	enum functions func = NONE;
+	unsigned int incrBuff = 0;
+
+	if (strncmp(jac->buf, "cos", 3) == 0)
+	{
+		incrBuff = 3;
+		func = COS;
+	}
+
+	else if (strncmp(jac->buf, "sin", 3) == 0)
+	{
+		incrBuff = 3;
+		func = SIN;
+	}
+
+	else if (strncmp(jac->buf, "asinhl", 6) == 0)
+	{
+		incrBuff = 6;
+		func = ASINH;
+	}
+
+	else if (strncmp(jac->buf, "asin", 4) == 0)
+	{
+		incrBuff = 4;
+		func = ASIN;
+	}
+
+	else if (strncmp(jac->buf, "atan", 4) == 0)
+	{
+		incrBuff = 4;
+		func = ATAN;
+	}
+
+	else if (strncmp(jac->buf, "acos", 4) == 0)
+	{
+		incrBuff = 4;
+		func = ACOS;
+	}
+
+	else if (strncmp(jac->buf, "sqrt", 4) == 0)
+	{
+		incrBuff = 4;
+		func = SQRT;
+	}
+
+	else if (strncmp(jac->buf, "sinh", 4) == 0)
+	{
+		incrBuff = 4;
+		func = SINH;
+	}
+
+	else if (strncmp(jac->buf, "cosh", 4) == 0)
+	{
+		incrBuff = 4;
+		func = COSH;
+	}
+
+	else if (strncmp(jac->buf, "tanh", 4) == 0)
+	{
+		incrBuff = 4;
+		func = TANH;
+	}
+
+	else if (strncmp(jac->buf, "tan", 3) == 0)
+	{
+		incrBuff = 3;
+		func = TAN;
+	}
+
+	else if (strncmp(jac->buf, "log", 3) == 0)
+	{
+		incrBuff = 3;
+		func = LOG;
+	}
+
+	else if (strncmp(jac->buf, "ln", 2) == 0)
+	{
+		incrBuff = 2;
+		func = LN;
+	}
+
+	else if (strncmp(jac->buf, "bin_dec", 7) == 0)
+	{
+		incrBuff = 7;
+		func = BIN_DEC;
+	}
+
+	else if (strncmp(jac->buf, "dec_bin", 7) == 0)
+	{
+		incrBuff = 7;
+		func = DEC_BIN;
+	}
+
+	else if (strncmp(jac->buf, "cbrt", 4) == 0)
+	{
+		incrBuff = 4;
+		func = CBRT;
+	}
+
+	else if (strncmp(jac->buf, "abs", 3) == 0)
+	{
+		incrBuff = 3;
+		func = ABS;
+	}
+
+	else
+		return NONE;
+
+	incrementBuff(jac,incrBuff);
+
+	return func;
 }
 
 long double calculate (struct node *head)
 {
 	struct node *tmp = head;
 
-	/* divide and multiply first */
+	long double result;
 
-	while (tmp->next != NULL && tmp->op != TAIL_OP)
+	while (tmp->next != NULL)			/* this cycle is needed to evaluate situations like 5(..) */
 	{
-		if (tmp->op == '/' || tmp->op == '*')
+		if (tmp->op == '*')
 		{
-			if (tmp->op  == '/')
-				tmp->value = tmp->value / tmp->next->value;
-
-			else
-				tmp->value = tmp->value * tmp->next->value;
+			tmp->value = tmp->value * tmp->next->value;
 
 			delNextNode(tmp);
 		}
@@ -328,32 +400,30 @@ long double calculate (struct node *head)
 
 	tmp = head;
 
-	/* Now do additions and subtraction */
+	/* Add up all numbers with their signs */
 
-	while (tmp != NULL && tmp->next != NULL && tmp->op != TAIL_OP)
+	while (tmp->next != NULL)
 	{
-		if (tmp->op == '+' || tmp->op == '-')
-		{
-			if (tmp->op  == '+')
-				tmp->value = tmp->value + tmp->next->value;
+		tmp->value = tmp->value + tmp->next->value;
 
-			else
-				tmp->value = tmp->value - tmp->next->value;
-
-			delNextNode(tmp);
-		}
-
-		else
-			tmp = tmp->next;
+		delNextNode(tmp);
 	}
 
-	return head->value;
+	result = head->value;
+
+	return result;
 }
 
 long double switchFunc(enum functions *func, long double *number)
 {
 	switch (*func)
 	{
+		case MULT:
+			return *number;
+
+		case DIV:
+			return *number;
+
 		case SIN:
 			return sinl(*number);
 
@@ -422,109 +492,71 @@ void incrementBuff (struct control *jac, int n)
 	jac->len += n;
 }
 
-enum functions searchFunction (struct control *jac)
+bool searchBinaryFunction (struct control *jac, struct node *head)
 {
-	if (strncmp(jac->buf, "cos", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		return COS;
-	}
+		bool result = true;
 
-	else if (strncmp(jac->buf, "sin", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		return SIN;
-	}
+		if (*jac->buf == '/')
+		{
+			incrementBuff(jac,1);
+			head->value = head->value / (evaluateFuncResult(jac, DIV));
+		}
 
-	else if (strncmp(jac->buf, "asinhl", 6) == 0)
-	{
-		incrementBuff(jac,6);
-		return ASINH;
-	}
+		else if (*jac->buf == '*')
+		{
+			incrementBuff(jac,1);
+			head->value = head->value * (evaluateFuncResult(jac, MULT));
+			head->op = TAIL_OP;	 /* we don't want head->op to contain '*' and cause interference in calculate() */
+		}
 
-	else if (strncmp(jac->buf, "asin", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		return ASIN;
-	}
+		else if (*jac->buf == '^')
+		{
+			incrementBuff(jac,1);
+			head->value = pow(head->value, evaluateFuncResult(jac, POW));
+		}
 
-	else if (strncmp(jac->buf, "atan", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		return ATAN;
-	}
+		else if (*jac->buf == '!') 	/* Factorial */
+		{
+			incrementBuff(jac,1);
+			head->value = factorial(head->value);
+		}
 
-	else if (strncmp(jac->buf, "acos", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		return ACOS;
-	}
+		else if (*jac->buf == '%')
+		{
+			incrementBuff(jac,1);
+			head->value = fmodl(head->value, evaluateFuncResult(jac, MOD));
+		}
 
-	else if (strncmp(jac->buf, "sqrt", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		return SQRT;
-	}
+		else
+			return false;
 
-	else if (strncmp(jac->buf, "sinh", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		return SINH;
-	}
+		return result;
+}
 
-	else if (strncmp(jac->buf, "cosh", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		return COSH;
-	}
+bool searchPowFunction (struct control *jac, long double *number)
+{
+		bool result = true;
 
-	else if (strncmp(jac->buf, "tanh", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		return TANH;
-	}
+		if (*jac->buf == '^')
+		{
+			incrementBuff(jac,1);
+			*number = pow(*number, evaluateFuncResult(jac, POW));
+		}
 
-	else if (strncmp(jac->buf, "tan", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		return TAN;
-	}
+		else if (*jac->buf == '!') 	/* Factorial */
+		{
+			incrementBuff(jac,1);
+			*number = factorial(*number);
+		}
 
-	else if (strncmp(jac->buf, "log", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		return LOG;
-	}
+		else if (*jac->buf == '%')
+		{
+			incrementBuff(jac,1);
+			*number = fmodl(*number, evaluateFuncResult(jac, MOD));
+		}
 
-	else if (strncmp(jac->buf, "ln", 2) == 0)
-	{
-		incrementBuff(jac,2);
-		return LN;
-	}
+		else
+			return false;
 
-	else if (strncmp(jac->buf, "bin_dec", 7) == 0)
-	{
-		incrementBuff(jac,7);
-		return BIN_DEC;
-	}
-
-	else if (strncmp(jac->buf, "dec_bin", 7) == 0)
-	{
-		incrementBuff(jac,7);
-		return DEC_BIN;
-	}
-
-	else if (strncmp(jac->buf, "cbrt", 4) == 0)
-	{
-		incrementBuff(jac,4);
-		return CBRT;
-	}
-
-	else if (strncmp(jac->buf, "abs", 3) == 0)
-	{
-		incrementBuff(jac,3);
-		return ABS;
-	}
-
-	return NONE;
+		return result;
 }

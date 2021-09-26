@@ -8,7 +8,7 @@ void add_item (struct node **ptr, long double data)
 
 	new_item->value = data;
 	new_item->next = *ptr;
-	new_item->op = '*';
+	new_item->op = '?';
 	*ptr = new_item;
 }
 

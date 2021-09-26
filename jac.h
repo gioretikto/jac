@@ -18,13 +18,10 @@
 #define M_E 2.71828182845904523536028747135266249775L
 #endif
 
-enum functions {NONE, SIN, COS, TAN, ASIN, ACOS, ATAN, LOG, LN, SQRT, SINH, COSH, TANH, ASINH, ABS, MOD, CBRT, BIN_DEC, DEC_BIN, POW};
+enum functions {NONE, SIN, COS, TAN, ASIN, ACOS, ATAN, LOG, LN, SQRT, SINH, COSH, TANH, ASINH, ABS, MOD, CBRT, BIN_DEC, DEC_BIN, POW, MULT, DIV};
 
 struct control{
 	char *buf;
-	int len;
-	bool insideBrackets;
-	enum functions inFunc;
-	bool bracketsFunc;
+	unsigned int len;
 	bool failure;
 };
