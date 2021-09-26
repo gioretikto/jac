@@ -1,8 +1,8 @@
-/* jac v.1.3.7 - Giovanni Resta 29/05/2020 */
+/* jac v.1.4.0 - Giovanni Resta 23/09/2021 */
 
 #include "jac.h"
 
-long double parse_evaluate_expr(struct control *jac);
+long double parse_evaluate_expr(struct control *jac, bool inFunc);
 void print_result(long double x);
 void remove_spaces(char *str);
 bool areParenthesisBalanced(char *exp);
@@ -21,9 +21,6 @@ int main(int argc, char* argv[])
 	struct control jac;
 
 	jac.len = 0;
-	jac.insideBrackets = false;
-	jac.inFunc = NONE;
-	jac.bracketsFunc = false;
 	jac.failure = false;
 
 	if (argc == 1)
@@ -59,7 +56,7 @@ int main(int argc, char* argv[])
 			if (jac.buf[0] == '\n')
 				return 0;
 
-			result = parse_evaluate_expr(&jac);
+			result = parse_evaluate_expr(&jac, false);
 
 			if (jac.failure == false)
 				print_result(result);
@@ -70,7 +67,6 @@ int main(int argc, char* argv[])
 
 	for (;;)
 	{
-
 		if (fgets(jac.buf = line, MAX, stdin) == NULL || *buf == 'x')
 			break;
 
@@ -93,7 +89,7 @@ int main(int argc, char* argv[])
 		{
 			remove_spaces(jac.buf);
 
-			result = parse_evaluate_expr(&jac);
+			result = parse_evaluate_expr(&jac, false);
 
 			if (jac.failure == false)
 				print_result(result);

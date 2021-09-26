@@ -1,4 +1,4 @@
-<h1>JAC 1.3.7 - Scientific command line calculator</h1>
+<h1>JAC 1.4.0 - Scientific command line calculator</h1>
 
 <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
@@ -15,11 +15,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.</p>
 
 <p>This is an Infix Notation Calculator for the GNU/Linux Operating System (not a polish one). JAC is the acronym of "Just Another Calculator" and it is particularly suitable for scientifical calculations. Examples of usage of jac are</p>
 
+<pre>cos(pi/4*e) = -0.534686930168567074466785728029</pre>
+
+<pre>cos(pi/4*e^2) = 0.887071465339717571814006158931</pre>
+
+<pre>cos(pi/4*e^2)*2 = 1.774142930679435143628012</pre>
+
 <pre>sin pi + 2 + 5 = 7</pre>
 
 <pre>sin (pi/2 + 3 + 5) = -0.1455000338086135254</pre>
 
 <pre>sin (pi/2 + 3 + 5)/2 = -0.07275001690430676268</pre>
+
+<pre>sin(2^(3+2)) = 0.5514266812416905506615581</pre>
 
 <p>Evaluation of the rest energy of the electron</p>
 
