@@ -38,13 +38,13 @@ int main(int argc, char* argv[])
 		{
 			fprintf(stderr,"%s\n","Syntax error: Mismatched parenthesis");
 
-			return 0;
+			return -2;
 		}
 
 		else if (!checkSyntax(line))
 		{
 			printf("%s\n", line);
-			return 0;
+			return -2;
 		}
 
 		else
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 			remove_spaces(jac.buf);
 
 			if (jac.buf[0] == '\n')
-				return 0;
+				return -2;
 
 			result = parse_evaluate_expr(&jac, false);
 

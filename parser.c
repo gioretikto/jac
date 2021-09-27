@@ -12,7 +12,7 @@ void reverse(struct node** head_ref);
 void add_item (struct node **ptr, long double data);
 void delNextNode (struct node *node_pt);
 
-long double calculate (struct node *head);
+long double calculate (struct node **head);
 long double evaluateFuncResult (struct control *jac, enum functions func);
 long double switchFunc(enum functions *func, long double *number);
 void incrementBuff (struct control *jac, int n);
@@ -73,8 +73,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 				if (isalpha(*jac->buf) || isdigit(*jac->buf))
 					head->op = '*';
 
-			reverse(&head);
-			number = calculate(head);
+			number = calculate(&head);
 
 			if (inFunc == true){
 				free(head);
@@ -159,8 +158,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 
 	else
 	{
-		reverse(&head);
-		number = calculate(head);
+		number = calculate(&head);
 		free(head);
 		return number;
 	}
@@ -248,7 +246,7 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 	{
 		incrementBuff(jac,n);
 
-		while(searchPowFunction(jac, &number))
+		while(searchPowFunction(jac, &number))		/* For situations like 5^2^3^.. */
 			{;}
 	
 		return switchFunc(&func, &number);
@@ -257,7 +255,7 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 	/* Parse for constants */
 	else if ((number = parseConstants(jac)) != 0)
 		{
-			while(searchPowFunction(jac, &number))
+			while(searchPowFunction(jac, &number))		/* For situations like pi^2^3^.. */
 				{;}
 		}
 
@@ -382,9 +380,11 @@ unsigned int searchFunction (struct control *jac)
 	return func;
 }
 
-long double calculate (struct node *head)
+long double calculate (struct node **head)
 {
-	struct node *tmp = head;
+	reverse(head);
+	
+	struct node *tmp = *head;
 
 	long double result;
 
@@ -401,7 +401,7 @@ long double calculate (struct node *head)
 			tmp = tmp->next;
 	}
 
-	tmp = head;
+	tmp = *head;
 
 	/* Add up all numbers with their signs */
 
@@ -412,7 +412,7 @@ long double calculate (struct node *head)
 		delNextNode(tmp);
 	}
 
-	result = head->value;
+	result = (*head)->value;
 
 	return result;
 }
