@@ -127,6 +127,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 			{
 				jac->failure = true;
 				fprintf(stderr,"Illegal character %s\n", jac->buf);
+				jac->buf[0] = '0';
 			}
 		}
 

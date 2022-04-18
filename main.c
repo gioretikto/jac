@@ -99,7 +99,6 @@ int main(int argc, char* argv[])
 			jac.failure = false;
 			printf(">>");
 		}
-
 	}
 
 	return 0;
