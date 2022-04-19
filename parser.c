@@ -3,6 +3,7 @@
 #include <math.h>
 
 #define TAIL_OP 'x' /* Operator of the tail node */
+#define ERROR '?'
 
 #ifndef M_PIl
 #define M_PIl 3.141592653589793238462643383279502884L
@@ -75,7 +76,8 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 
 			number = calculate(&head);
 
-			if (inFunc == true){
+			if (inFunc == true)
+			{
 				free(head);
 				return number;
 			}
@@ -120,14 +122,14 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 				}
 
 				else 
-					jac->failure = true;
+					jac->buf[0] = ERROR;
 			}
 			
 			else 				/* Syntax error */
 			{
-				jac->failure = true;
 				fprintf(stderr,"Illegal character %s\n", jac->buf);
-				jac->buf[0] = '0';
+				jac->buf[0] = ERROR;
+				return -2;
 			}
 		}
 
@@ -140,7 +142,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 
 	if (head == NULL)
 	{
-		jac->failure = true;
+		jac->buf[0] = ERROR;
 		return -2;
 	}
 
@@ -148,10 +150,10 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 	{
 		fprintf(stderr,"%s\n","The limit size of the expression was reached");
 
-		jac->failure = true;
+		jac->buf[0] = ERROR;
 	}
 
-	if (jac->failure == true)
+	if (jac->buf[0] == ERROR)
 	{
 		free(head);
 		return -2;
@@ -432,7 +434,7 @@ long double switchFunc(enum functions *func, long double *number)
 			return sinl(*number);
 
 		case COS:
-	    	return cosl(*number);
+	    		return cosl(*number);
 
 		case TAN:
 			return tanl(*number);
@@ -459,33 +461,33 @@ long double switchFunc(enum functions *func, long double *number)
 			return bin_dec(*number);
 
 		case DEC_BIN:
-	    	return dec_bin(*number);
+	    		return dec_bin(*number);
 
 		case ABS:
 			return fabsl(*number);
 
-	    case LOG:
-	    	return log10l(*number);
+		case LOG:
+			return log10l(*number);
 
-	    case ASIN:
-	    	return asinl(*number);
+		case ASIN:
+			return asinl(*number);
 
-    	case LN:
-	    	return logl(*number);
+		case LN:
+			return logl(*number);
 
-	    case MOD:
+		case MOD:
 			return *number;
 
-	   	case ACOS:
-	    	return acosl(*number);
+		case ACOS:
+			return acosl(*number);
 
-	    case SQRT:
+		case SQRT:
 			return sqrtl(*number);
 
 		case CBRT:
 			return cbrtl(*number);
 
-	    default:
+		default:
 			return -2;
 	}
 }

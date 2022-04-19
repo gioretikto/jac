@@ -110,8 +110,8 @@ int pop(struct charNode** top_ref)
   }
 }
 
-bool checkSyntax(char *str) {
-
+bool checkSyntax(char *str)
+{
 	if (*str == 'x')
 		return false;
 		
@@ -152,5 +152,4 @@ bool checkSyntax(char *str) {
 	}
 	
 	return true;
-
 }

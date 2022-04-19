@@ -2,6 +2,8 @@
 
 #include "jac.h"
 
+#define ERROR '?'
+
 long double parse_evaluate_expr(struct control *jac, bool inFunc);
 void print_result(long double x);
 void remove_spaces(char *str);
@@ -21,7 +23,6 @@ int main(int argc, char* argv[])
 	struct control jac;
 
 	jac.len = 0;
-	jac.failure = false;
 
 	if (argc == 1)
 		printf("Enter x to quit\n>>");
@@ -53,12 +54,12 @@ int main(int argc, char* argv[])
 
 			remove_spaces(jac.buf);
 
-			if (jac.buf[0] == '\n')
+			if (jac.buf[0] == ERROR)
 				return -2;
 
 			result = parse_evaluate_expr(&jac, false);
 
-			if (jac.failure == false)
+			if (jac.buf[0] != ERROR)
 				print_result(result);
 		}
 
@@ -91,12 +92,11 @@ int main(int argc, char* argv[])
 
 			result = parse_evaluate_expr(&jac, false);
 
-			if (jac.failure == false)
+			if (jac.buf[0] != ERROR)
 				print_result(result);
 			else
 				fprintf(stderr,"%s\n","Syntax error");
 
-			jac.failure = false;
 			printf(">>");
 		}
 	}

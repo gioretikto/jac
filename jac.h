@@ -23,5 +23,4 @@ enum functions {NONE, SIN, COS, TAN, ASIN, ACOS, ATAN, LOG, LN, SQRT, SINH, COSH
 struct control{
 	char *buf;
 	unsigned int len;
-	bool failure;
 };
