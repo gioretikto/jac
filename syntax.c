@@ -127,7 +127,7 @@ bool checkSyntax(char *str)
 		while (*str != '\0')
 		{
 			/*characters that are not part of the syntax */	
-			if (*str =='j' || *str =='f' || *str =='u' || *str =='v' || *str =='y' || *str =='w' || *str =='x')
+			if (*str =='j' || *str =='f' || *str =='u' || *str =='v' || *str =='y' || *str =='w' || *str =='x' || *str =='z')
 			{
 				fprintf(stderr,"%s%c\n","Syntax error: Invalid character ",*str);
 				return false;			

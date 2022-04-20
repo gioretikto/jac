@@ -29,7 +29,8 @@ enum functions searchFunction (struct control *jac);
 
 long double abort_parsing(struct node *head)
 {
-	free(head);
+	if(head != NULL)
+		free(head);
 
 	return -2;
 }
@@ -128,7 +129,8 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 					head->value = pow(head->value, number);
 				}
 
-				else {
+				else
+				{
 					jac->buf[0] = ERROR;
 					return abort_parsing(head);
 				}

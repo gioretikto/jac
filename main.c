@@ -54,13 +54,13 @@ int main(int argc, char* argv[])
 
 			remove_spaces(jac.buf);
 
-			if (jac.buf[0] == ERROR)
-				return -2;
-
 			result = parse_evaluate_expr(&jac, false);
 
 			if (jac.buf[0] != ERROR)
 				print_result(result);
+
+			else
+				return -2;
 		}
 
 		return 0;
