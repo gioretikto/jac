@@ -15,8 +15,8 @@ void delNextNode (struct node *node_pt);
 
 long double calculate (struct node **head);
 long double evaluateFuncResult (struct control *jac, enum functions func);
-long double switchFunc(enum functions *func, long double *number);
-void incrementBuff (struct control *jac, int n);
+long double switchFunc(enum functions *func, const long double *number);
+void incrementBuff (struct control *jac, const int n);
 
 unsigned long factorial(unsigned long f);
 int bin_dec(long long n);
@@ -26,6 +26,13 @@ bool searchBinaryFunction (struct control *jac, struct node *head);
 bool searchPowFunction (struct control *jac, long double *number);
 
 enum functions searchFunction (struct control *jac);
+
+long double abort_parsing(struct node *head)
+{
+	free(head);
+
+	return -2;
+}
 
 long double parse_evaluate_expr(struct control *jac, bool inFunc)
 {
@@ -83,7 +90,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 			}
 		}
 
-		else if(searchBinaryFunction(jac, head))
+		else if (searchBinaryFunction(jac, head))
 			;
 
 		else if (isalpha(*jac->buf))
@@ -121,15 +128,17 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 					head->value = pow(head->value, number);
 				}
 
-				else 
+				else {
 					jac->buf[0] = ERROR;
+					return abort_parsing(head);
+				}
 			}
 			
 			else 				/* Syntax error */
 			{
 				fprintf(stderr,"Illegal character %s\n", jac->buf);
 				jac->buf[0] = ERROR;
-				return -2;
+				return abort_parsing(head);
 			}
 		}
 
@@ -146,17 +155,11 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 		return -2;
 	}
 
-	if (jac->len >= MAX)
+	else if (jac->len >= MAX)
 	{
 		fprintf(stderr,"%s\n","The limit size of the expression was reached");
-
 		jac->buf[0] = ERROR;
-	}
-
-	if (jac->buf[0] == ERROR)
-	{
-		free(head);
-		return -2;
+		return abort_parsing(head);
 	}
 
 	else
@@ -165,6 +168,47 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 		free(head);
 		return number;
 	}
+}
+
+bool searchBinaryFunction (struct control *jac, struct node *head)
+{
+		bool result = true;
+
+		if (*jac->buf == '/')
+		{
+			incrementBuff(jac,1);
+			head->value = head->value / (evaluateFuncResult(jac, DIV));
+		}
+
+		else if (*jac->buf == '*')
+		{
+			incrementBuff(jac,1);
+			head->value = head->value * (evaluateFuncResult(jac, MULT));
+			head->op = TAIL_OP;	 /* we don't want head->op to contain '*' and cause interference in calculate() */
+		}
+
+		else if (*jac->buf == '^')
+		{
+			incrementBuff(jac,1);
+			head->value = pow(head->value, evaluateFuncResult(jac, POW));
+		}
+
+		else if (*jac->buf == '!') 	/* Factorial */
+		{
+			incrementBuff(jac,1);
+			head->value = factorial(head->value);
+		}
+
+		else if (*jac->buf == '%')
+		{
+			incrementBuff(jac,1);
+			head->value = fmodl(head->value, evaluateFuncResult(jac, MOD));
+		}
+
+		else
+			return false;
+
+		return result;
 }
 
 long double parseConstants(struct control *jac)
@@ -420,7 +464,7 @@ long double calculate (struct node **head)
 	return result;
 }
 
-long double switchFunc(enum functions *func, long double *number)
+long double switchFunc(enum functions *func, const long double *number)
 {
 	switch (*func)
 	{
@@ -492,51 +536,10 @@ long double switchFunc(enum functions *func, long double *number)
 	}
 }
 
-void incrementBuff (struct control *jac, int n)
+void incrementBuff (struct control *jac, const int n)
 {
 	jac->buf += n;
 	jac->len += n;
-}
-
-bool searchBinaryFunction (struct control *jac, struct node *head)
-{
-		bool result = true;
-
-		if (*jac->buf == '/')
-		{
-			incrementBuff(jac,1);
-			head->value = head->value / (evaluateFuncResult(jac, DIV));
-		}
-
-		else if (*jac->buf == '*')
-		{
-			incrementBuff(jac,1);
-			head->value = head->value * (evaluateFuncResult(jac, MULT));
-			head->op = TAIL_OP;	 /* we don't want head->op to contain '*' and cause interference in calculate() */
-		}
-
-		else if (*jac->buf == '^')
-		{
-			incrementBuff(jac,1);
-			head->value = pow(head->value, evaluateFuncResult(jac, POW));
-		}
-
-		else if (*jac->buf == '!') 	/* Factorial */
-		{
-			incrementBuff(jac,1);
-			head->value = factorial(head->value);
-		}
-
-		else if (*jac->buf == '%')
-		{
-			incrementBuff(jac,1);
-			head->value = fmodl(head->value, evaluateFuncResult(jac, MOD));
-		}
-
-		else
-			return false;
-
-		return result;
 }
 
 bool searchPowFunction (struct control *jac, long double *number)

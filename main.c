@@ -71,7 +71,8 @@ int main(int argc, char* argv[])
 		if (fgets(jac.buf = line, MAX, stdin) == NULL || *buf == 'x')
 			break;
 
-		if (jac.buf[0] == '\n'){
+		if (jac.buf[0] == '\n')
+		{
 			printf(">>");
 			continue;
 		}
