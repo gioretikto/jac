@@ -83,31 +83,31 @@ void push(struct charNode** top_ref, int new_data)
 
 int pop(struct charNode** top_ref)
 {
-  char res;
+	char res;
 
-  struct charNode *top;
+	struct charNode *top;
 
-  if (*top_ref == NULL)
-  {
-     printf("Stack overflow n");
+	if (*top_ref == NULL)
+	{
+		printf("Stack overflow n");
 
-     getchar();
+		getchar();
 
-     exit(0);
-  }
+		exit(0);
+	}
 
-  else
-  {
-     top = *top_ref;
+	else
+	{
+		top = *top_ref;
 
-     res = top->data;
+		res = top->data;
 
-     *top_ref = top->next;
+		*top_ref = top->next;
 
-     free(top);
+		free(top);
 
-     return res;
-  }
+		return res;
+	}
 }
 
 bool checkSyntax(char *str)
@@ -133,7 +133,7 @@ bool checkSyntax(char *str)
 				return false;			
 			}
 
-			else if ((isdigit(*str)) && (str[1] != '\0' || str[1] != '\t'))
+			else if ((*str == '+' || *str =='*' || *str == '-' || *str =='/') && (str[1] == '\0' || str[1] == '\t'))
 			{
 				fprintf(stderr,"%s%c%c\n","Syntax error: Invalid sequence ",*str, str[1]);
 				return false;

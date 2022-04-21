@@ -35,25 +35,25 @@ int main(int argc, char* argv[])
 		for (i = 2; i < argc; i++)
 			strcat(line, argv[i]);
 
-		if (!areParenthesisBalanced(line))
+		jac.buf = line;
+
+		remove_spaces(jac.buf);
+
+		if (!areParenthesisBalanced(jac.buf))
 		{
 			fprintf(stderr,"%s\n","Syntax error: Mismatched parenthesis");
 
 			return -2;
 		}
 
-		else if (!checkSyntax(line))
+		else if (!checkSyntax(jac.buf))
 		{
-			printf("%s\n", line);
+			printf("%s\n", jac.buf);
 			return -2;
 		}
 
 		else
 		{
-			jac.buf = line;
-
-			remove_spaces(jac.buf);
-
 			result = parse_evaluate_expr(&jac, false);
 
 			if (jac.buf[0] != ERROR)
@@ -77,19 +77,20 @@ int main(int argc, char* argv[])
 			continue;
 		}
 
-		if (!areParenthesisBalanced(line))
+		remove_spaces(jac.buf);
+
+		if (!areParenthesisBalanced(jac.buf))
 		{
 			fprintf(stderr,"%s\n","Syntax error: Mismatched parenthesis");
 
 			printf(">>");
 		}
 
-		else if (!checkSyntax(line))
+		else if (!checkSyntax(jac.buf))
 			printf(">>");
 
 		else
 		{
-			remove_spaces(jac.buf);
 
 			result = parse_evaluate_expr(&jac, false);
 
