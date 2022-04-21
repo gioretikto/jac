@@ -140,7 +140,7 @@ bool checkSyntax(char *str)
 				return false;
 			}
 			
-			else if ((*str >= 58 && *str <=64) || (*str > 33 && *str <=36) || *str== ',' )
+			else if ((*str >= 58 && *str <= 64) || (*str > 33 && *str <= 36) || *str== ',' )
 			{	
 				fprintf(stderr,"%s: %c\n","Syntax error: Invalid symbol",*str);
 				return false;				

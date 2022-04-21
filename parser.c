@@ -29,7 +29,7 @@ enum functions searchFunction (struct control *jac);
 
 long double abort_parsing(struct node *head)
 {
-	if(head != NULL)
+	if (head != NULL)
 		free(head);
 
 	return -2;
@@ -45,7 +45,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 
 	enum functions func = NONE;
 
-	while (jac->len < MAX && *jac->buf != '\0')
+	while (jac->len < MAX && *jac->buf != '\0' && jac->buf[0] != ERROR)
 	{
 		if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
 		{
@@ -104,7 +104,8 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 			/* Parse for constants */
 			else if ((number = parseConstants(jac)) != 0)
 			{
-				if (inFunc == true) {
+				if (inFunc == true)
+				{
 					searchPowFunction(jac, &number);
 					return number;
 				}
@@ -132,7 +133,6 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 				else
 				{
 					jac->buf[0] = ERROR;
-					return abort_parsing(head);
 				}
 			}
 			
@@ -140,7 +140,6 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 			{
 				fprintf(stderr,"Illegal character %s\n", jac->buf);
 				jac->buf[0] = ERROR;
-				return abort_parsing(head);
 			}
 		}
 
@@ -151,7 +150,12 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 
 	/* Once parsed, jac evaluates the expression */
 
-	if (head == NULL)
+	if (jac->buf[0] == ERROR)
+	{
+		return abort_parsing(head);
+	}
+
+	else if (head == NULL)
 	{
 		jac->buf[0] = ERROR;
 		return -2;
@@ -297,16 +301,24 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 
 		while(searchPowFunction(jac, &number))		/* For situations like 5^2^3^.. */
 			{;}
-	
+
 		return switchFunc(&func, &number);
 	}
 
-	/* Parse for constants */
-	else if ((number = parseConstants(jac)) != 0)
+	else if (isalpha(*jac->buf)) 	/* Parse for constants */
+	{
+		if ((number = parseConstants(jac)) == 0)
+		{
+			jac->buf[0] = ERROR;
+			return 0;
+		}
+
+		else
 		{
 			while(searchPowFunction(jac, &number))		/* For situations like pi^2^3^.. */
 				{;}
 		}
+	}
 
 	else
 		number = parse_evaluate_expr(jac, true);
@@ -480,7 +492,7 @@ long double switchFunc(enum functions *func, const long double *number)
 			return sinl(*number);
 
 		case COS:
-	    		return cosl(*number);
+			return cosl(*number);
 
 		case TAN:
 			return tanl(*number);

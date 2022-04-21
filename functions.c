@@ -60,6 +60,7 @@ void remove_spaces(char *str)
 {
 	unsigned int count = 0;
 	unsigned int i;
+
 	for (i = 0; str[i]; i++)
 		if (str[i] != ' ' && str[i] != '\n')
 			str[count++] = str[i];
