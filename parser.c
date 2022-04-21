@@ -421,18 +421,6 @@ unsigned int searchFunction (struct control *jac)
 		func = DEC_BIN;
 	}
 
-	else if (strncmp(jac->buf, "cbrt", 4) == 0)
-	{
-		incrBuff = 4;
-		func = CBRT;
-	}
-
-	else if (strncmp(jac->buf, "abs", 3) == 0)
-	{
-		incrBuff = 3;
-		func = ABS;
-	}
-
 	else
 		return NONE;
 
@@ -519,10 +507,7 @@ long double switchFunc(enum functions *func, const long double *number)
 			return bin_dec(*number);
 
 		case DEC_BIN:
-	    		return dec_bin(*number);
-
-		case ABS:
-			return fabsl(*number);
+	    	return dec_bin(*number);
 
 		case LOG:
 			return log10l(*number);
@@ -541,9 +526,6 @@ long double switchFunc(enum functions *func, const long double *number)
 
 		case SQRT:
 			return sqrtl(*number);
-
-		case CBRT:
-			return cbrtl(*number);
 
 		default:
 			return -2;

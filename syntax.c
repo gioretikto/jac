@@ -132,6 +132,12 @@ bool checkSyntax(char *str)
 				fprintf(stderr,"%s%c\n","Syntax error: Invalid character ",*str);
 				return false;			
 			}
+
+			else if ((isdigit(*str)) && (str[1] != '\0' || str[1] != '\t'))
+			{
+				fprintf(stderr,"%s%c%c\n","Syntax error: Invalid sequence ",*str, str[1]);
+				return false;
+			}			
 		
 			else if (*str == str[1] && !isdigit(*str) && *str !='(' && *str !='[' && *str != '{'
 					 && *str !=')' && *str !=']' && *str !='}' && *str != '|')
