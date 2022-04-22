@@ -119,26 +119,26 @@ bool checkSyntax(char *str)
 	 && *str != '+' && *str != '{' && *str !=')' && *str !=']' && *str !='}' && *str !='|')
 	{	  
 		fprintf(stderr,"%s%c\n","Syntax error: Expression starting with illegal character ",*str);
-		return false;		
+		return false;	
 	}
 	
 	else
 	{
 		while (*str != '\0')
 		{
-			/*characters that are not part of the syntax */	
+			/*characters that are not part of the syntax */
 			if (*str =='j' || *str =='f' || *str =='u' || *str =='v' || *str =='y' || *str =='w' || *str =='x' || *str =='z')
 			{
 				fprintf(stderr,"%s%c\n","Syntax error: Invalid character ",*str);
-				return false;			
+				return false;
 			}
 
 			else if ((*str == '+' || *str =='*' || *str == '-' || *str =='/') && (str[1] == '\0' || str[1] == '\t'))
 			{
-				fprintf(stderr,"%s%c%c\n","Syntax error: Invalid sequence ",*str, str[1]);
+				fprintf(stderr,"%s%c\n","Syntax error: Invalid sequence terminating with ",*str);
 				return false;
-			}			
-		
+			}
+
 			else if (*str == str[1] && !isdigit(*str) && *str !='(' && *str !='[' && *str != '{'
 					 && *str !=')' && *str !=']' && *str !='}' && *str != '|')
 			{
@@ -149,13 +149,13 @@ bool checkSyntax(char *str)
 			else if ((*str >= 58 && *str <= 64) || (*str > 33 && *str <= 36) || *str== ',' )
 			{	
 				fprintf(stderr,"%s: %c\n","Syntax error: Invalid symbol",*str);
-				return false;				
+				return false;
 			}
 			
 			else
-				str++;			
+				str++;
 		}
 	}
-	
+
 	return true;
 }

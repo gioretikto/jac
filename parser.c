@@ -9,15 +9,15 @@
 #define M_PIl 3.141592653589793238462643383279502884L
 #endif
 
+enum functions {COS,SIN,ASINH,ASIN,ATAN,ACOS,SQRT,SINH,COSH,TANH,TAN,LOG,LN,MULT_DIV_POW_MOD,NONE};
+
 void reverse(struct node** head_ref);
 void add_item (struct node **ptr, long double data);
 void delNextNode (struct node *node_pt);
-
 long double calculate (struct node **head);
 long double evaluateFuncResult (struct control *jac, enum functions func);
 long double switchFunc(enum functions *func, const long double *number);
 void incrementBuff (struct control *jac, const int n);
-
 unsigned long factorial(unsigned long f);
 int bin_dec(long long n);
 long long dec_bin(int n);
@@ -26,6 +26,11 @@ bool searchBinaryFunction (struct control *jac, struct node *head);
 bool searchPowFunction (struct control *jac, long double *number);
 
 enum functions searchFunction (struct control *jac);
+
+long double mult_div_pow_mod(long double number)
+{
+	return number;
+}
 
 long double abort_parsing(struct node *head)
 {
@@ -131,9 +136,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 				}
 
 				else
-				{
 					jac->buf[0] = ERROR;
-				}
 			}
 			
 			else 				/* Syntax error */
@@ -151,9 +154,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 	/* Once parsed, jac evaluates the expression */
 
 	if (jac->buf[0] == ERROR)
-	{
 		return abort_parsing(head);
-	}
 
 	else if (head == NULL)
 	{
@@ -183,20 +184,20 @@ bool searchBinaryFunction (struct control *jac, struct node *head)
 		if (*jac->buf == '/')
 		{
 			incrementBuff(jac,1);
-			head->value = head->value / (evaluateFuncResult(jac, DIV));
+			head->value = head->value / (evaluateFuncResult(jac, MULT_DIV_POW_MOD));
 		}
 
 		else if (*jac->buf == '*')
 		{
 			incrementBuff(jac,1);
-			head->value = head->value * (evaluateFuncResult(jac, MULT));
+			head->value = head->value * (evaluateFuncResult(jac, MULT_DIV_POW_MOD));
 			head->op = TAIL_OP;	 /* we don't want head->op to contain '*' and cause interference in calculate() */
 		}
 
 		else if (*jac->buf == '^')
 		{
 			incrementBuff(jac,1);
-			head->value = pow(head->value, evaluateFuncResult(jac, POW));
+			head->value = pow(head->value, evaluateFuncResult(jac, MULT_DIV_POW_MOD));
 		}
 
 		else if (*jac->buf == '!') 	/* Factorial */
@@ -208,7 +209,7 @@ bool searchBinaryFunction (struct control *jac, struct node *head)
 		else if (*jac->buf == '%')
 		{
 			incrementBuff(jac,1);
-			head->value = fmodl(head->value, evaluateFuncResult(jac, MOD));
+			head->value = fmodl(head->value, evaluateFuncResult(jac, MULT_DIV_POW_MOD));
 		}
 
 		else
@@ -295,6 +296,10 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 	long double number;
 	unsigned int n;
 
+	typedef long double (*my_func)(long double);
+
+	static my_func array[] = {cosl, sinl, asinhl, asinl, atanl, acosl, sqrtl, sinhl, coshl, tanhl, tanl, log10l, logl, mult_div_pow_mod};
+
 	if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
 	{
 		incrementBuff(jac,n);
@@ -302,7 +307,7 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 		while(searchPowFunction(jac, &number))		/* For situations like 5^2^3^.. */
 			{;}
 
-		return switchFunc(&func, &number);
+		return (array[func](number));
 	}
 
 	else if (isalpha(*jac->buf)) 	/* Parse for constants */
@@ -323,7 +328,7 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 	else
 		number = parse_evaluate_expr(jac, true);
 
-	return switchFunc(&func, &number);
+	return (array[func](number));
 }
 
 unsigned int searchFunction (struct control *jac)
@@ -409,7 +414,7 @@ unsigned int searchFunction (struct control *jac)
 		func = LN;
 	}
 
-	else if (strncmp(jac->buf, "bin_dec", 7) == 0)
+	/*else if (strncmp(jac->buf, "bin_dec", 7) == 0)
 	{
 		incrBuff = 7;
 		func = BIN_DEC;
@@ -419,7 +424,7 @@ unsigned int searchFunction (struct control *jac)
 	{
 		incrBuff = 7;
 		func = DEC_BIN;
-	}
+	}*/
 
 	else
 		return NONE;
@@ -466,72 +471,6 @@ long double calculate (struct node **head)
 	return result;
 }
 
-long double switchFunc(enum functions *func, const long double *number)
-{
-	switch (*func)
-	{
-		case MULT:
-			return *number;
-
-		case DIV:
-			return *number;
-
-		case SIN:
-			return sinl(*number);
-
-		case COS:
-			return cosl(*number);
-
-		case TAN:
-			return tanl(*number);
-
-		case POW:
-			return *number;
-
-		case ATAN:
-			return atanl(*number);
-
-		case SINH:
-			return sinhl(*number);
-
-		case COSH:
-			return coshl(*number);
-
-		case TANH:
-			return tanhl(*number);
-
-		case ASINH:
-			return asinhl(*number);
-
-		case BIN_DEC:
-			return bin_dec(*number);
-
-		case DEC_BIN:
-	    	return dec_bin(*number);
-
-		case LOG:
-			return log10l(*number);
-
-		case ASIN:
-			return asinl(*number);
-
-		case LN:
-			return logl(*number);
-
-		case MOD:
-			return *number;
-
-		case ACOS:
-			return acosl(*number);
-
-		case SQRT:
-			return sqrtl(*number);
-
-		default:
-			return -2;
-	}
-}
-
 void incrementBuff (struct control *jac, const int n)
 {
 	jac->buf += n;
@@ -545,7 +484,7 @@ bool searchPowFunction (struct control *jac, long double *number)
 		if (*jac->buf == '^')
 		{
 			incrementBuff(jac,1);
-			*number = pow(*number, evaluateFuncResult(jac, POW));
+			*number = pow(*number, evaluateFuncResult(jac, MULT_DIV_POW_MOD));
 		}
 
 		else if (*jac->buf == '!') 	/* Factorial */
@@ -557,7 +496,7 @@ bool searchPowFunction (struct control *jac, long double *number)
 		else if (*jac->buf == '%')
 		{
 			incrementBuff(jac,1);
-			*number = fmodl(*number, evaluateFuncResult(jac, MOD));
+			*number = fmodl(*number, evaluateFuncResult(jac, MULT_DIV_POW_MOD));
 		}
 
 		else
