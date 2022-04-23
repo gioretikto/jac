@@ -9,7 +9,7 @@ unsigned long factorial(unsigned long f)
 	return(f * factorial(f - 1));
 }
 
-int bin_dec(long long n)
+/*int bin_dec(long long n)
 {
 	int dec = 0, i = 0, rem;
     
@@ -39,7 +39,7 @@ long long dec_bin(int n)
 	}
     
 	return bin;
-}
+}*/
 
 void print_result(long double x)
 {

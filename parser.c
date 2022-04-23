@@ -19,8 +19,9 @@ long double evaluateFuncResult (struct control *jac, enum functions func);
 long double switchFunc(enum functions *func, const long double *number);
 void incrementBuff (struct control *jac, const int n);
 unsigned long factorial(unsigned long f);
-int bin_dec(long long n);
+/*int bin_dec(long long n);
 long long dec_bin(int n);
+*/
 long double parseConstants(struct control *jac);
 bool searchBinaryFunction (struct control *jac, struct node *head);
 bool searchPowFunction (struct control *jac, long double *number);
@@ -76,7 +77,8 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 		else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')
 		{
 			incrementBuff(jac,1);
-			add_item(&head, parse_evaluate_expr(jac, inFunc));
+			if(inFunc != true)
+				add_item(&head, parse_evaluate_expr(jac, inFunc));
 		}
 
 		else if (*jac->buf == ')' || *jac->buf == ']' || *jac->buf == '}')
@@ -109,19 +111,10 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 			/* Parse for constants */
 			else if ((number = parseConstants(jac)) != 0)
 			{
-				if (inFunc == true)
-				{
-					searchPowFunction(jac, &number);
-					return number;
-				}
-
-				else
-				{
 					add_item(&head, number);
 
 					if (*jac->buf == '(')		/* For situations like 5(3+2) */
 						head->op = '*';
-				}
 			}
 
 			else if (*jac->buf == 'E')
@@ -179,8 +172,6 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 
 bool searchBinaryFunction (struct control *jac, struct node *head)
 {
-		bool result = true;
-
 		if (*jac->buf == '/')
 		{
 			incrementBuff(jac,1);
@@ -215,7 +206,7 @@ bool searchBinaryFunction (struct control *jac, struct node *head)
 		else
 			return false;
 
-		return result;
+		return true;
 }
 
 long double parseConstants(struct control *jac)
@@ -298,6 +289,8 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 
 	typedef long double (*my_func)(long double);
 
+	enum functions func2;
+
 	static my_func array[] = {cosl, sinl, asinhl, asinl, atanl, acosl, sqrtl, sinhl, coshl, tanhl, tanl, log10l, logl, mult_div_pow_mod};
 
 	if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
@@ -310,18 +303,23 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 		return (array[func](number));
 	}
 
-	else if (isalpha(*jac->buf)) 	/* Parse for constants */
+	else if (isalpha(*jac->buf)) 	/* Parse for functions and constants */
 	{
-		if ((number = parseConstants(jac)) == 0)
-		{
-			jac->buf[0] = ERROR;
-			return 0;
-		}
+		if ((func2 = searchFunction(jac)) != NONE)
+			return evaluateFuncResult(jac, func2);
 
 		else
 		{
-			while(searchPowFunction(jac, &number))		/* For situations like pi^2^3^.. */
-				{;}
+			number = parseConstants(jac);
+
+			if (number != 0)
+				return (array[func](number));
+
+			else
+			{
+				jac->buf[0] = ERROR;
+				return 0;
+			}
 		}
 	}
 
@@ -479,8 +477,6 @@ void incrementBuff (struct control *jac, const int n)
 
 bool searchPowFunction (struct control *jac, long double *number)
 {
-		bool result = true;
-
 		if (*jac->buf == '^')
 		{
 			incrementBuff(jac,1);
@@ -502,5 +498,5 @@ bool searchPowFunction (struct control *jac, long double *number)
 		else
 			return false;
 
-		return result;
+		return true;
 }

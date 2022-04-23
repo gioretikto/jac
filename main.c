@@ -91,11 +91,11 @@ int main(int argc, char* argv[])
 
 		else
 		{
-
 			result = parse_evaluate_expr(&jac, false);
 
 			if (jac.buf[0] != ERROR)
 				print_result(result);
+
 			else
 				fprintf(stderr,"%s\n","Syntax error");
 
