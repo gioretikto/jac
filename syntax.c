@@ -133,13 +133,13 @@ bool checkSyntax(char *str)
 				return false;
 			}
 
-			else if ((*str == '+' || *str =='*' || *str == '-' || *str =='/' || *str =='.') && (str[1] == '\0' || str[1] == '\t' || str[1] ==')' || str[1] ==']' || str[1] =='}' || str[1] == '+' || str[1] =='*' || str[1] == '-' || str[1] =='/' || str[1] =='.'))
+			else if ((*str == '+' || *str =='*' || *str == '-' || *str =='/' || *str =='.') && (str[1] == '\0' || str[1] ==')' || str[1] ==']' || str[1] =='}' || str[1] == '+' || str[1] =='*' || str[1] == '-' || str[1] =='/' || str[1] =='.'))
 			{
 				fprintf(stderr,"%s%c\n","Syntax error: Invalid expression terminating with ",*str);
 				return false;
 			}
 			
-			else if ((*str >= 58 && *str <= 64) || (*str > 33 && *str <= 36) || *str== ',' )
+			else if ((*str >= 58 && *str <= 64) || (*str > 33 && *str <= 36) || *str== ',' || *str== '~' || *str =='`' || *str== '&' || *str =='|' || *str =='\t')
 			{	
 				fprintf(stderr,"%s: %c\n","Syntax error: Invalid symbol",*str);
 				return false;
