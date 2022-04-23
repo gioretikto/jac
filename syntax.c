@@ -133,16 +133,9 @@ bool checkSyntax(char *str)
 				return false;
 			}
 
-			else if ((*str == '+' || *str =='*' || *str == '-' || *str =='/' || *str =='.') && (str[1] == '\0' || str[1] == '\t' || str[1] ==')' || str[1] ==']' || str[1] =='}'))
+			else if ((*str == '+' || *str =='*' || *str == '-' || *str =='/' || *str =='.') && (str[1] == '\0' || str[1] == '\t' || str[1] ==')' || str[1] ==']' || str[1] =='}' || str[1] == '+' || str[1] =='*' || str[1] == '-' || str[1] =='/' || str[1] =='.'))
 			{
-				fprintf(stderr,"%s%c\n","Syntax error: Invalid sequence terminating with ",*str);
-				return false;
-			}
-
-			else if (*str == str[1] && !isdigit(*str) && *str !='(' && *str !='[' && *str != '{'
-					 && *str !=')' && *str !=']' && *str !='}' && *str != '|')
-			{
-				fprintf(stderr,"%s%c %c\n","Syntax error: Invalid sequence ",*str, *str);
+				fprintf(stderr,"%s%c\n","Syntax error: Invalid expression terminating with ",*str);
 				return false;
 			}
 			
