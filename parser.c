@@ -89,7 +89,11 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 				if (isalpha(*jac->buf) || isdigit(*jac->buf))
 					head->op = '*';
 
-			number = calculate(&head);
+			if (head != NULL)
+				number = calculate(&head);
+
+			else
+				jac->buf[0] = ERROR;
 
 			if (inFunc == true)
 			{
