@@ -328,7 +328,7 @@ bool checkSyntax(char *buf)
 				return false;
 			}
 
-			else if (buf[1] == '\0')
+			else if (buf[1] == '\0') /* For situations like 5+ */
 			{
 				fprintf(stderr, "Invalid expression binary operator %c with second operand missing\n", *buf);
 				return false;
@@ -356,7 +356,10 @@ bool checkSyntax(char *buf)
 				;
 
 			else
+			{
+				fprintf(stderr, "Invalid charachter %c \n", *buf);
 				return false;
+			}
 		}
 
 		else if (*buf == '(' || *buf == '{' || *buf == '[')
