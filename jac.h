@@ -20,5 +20,4 @@
 
 struct control{
 	char *buf;
-	unsigned int len;
 };
