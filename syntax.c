@@ -324,7 +324,7 @@ bool checkSyntax(char *buf)
 		{
 			if (op == true)
 			{
-				fprintf(stderr, "Double operator detected %c", *buf);
+				fprintf(stderr, "Double operator detected %c\n", *buf);
 				return false;
 			}
 
@@ -373,7 +373,7 @@ bool checkSyntax(char *buf)
 		{
 			if (op == true)
 			{
-				fprintf(stderr, "Invalid expression terminating in operator + %c", *buf);
+				fprintf(stderr, "Invalid expression terminating in operator + %c\n", *buf);
 				return false;
 			}
 

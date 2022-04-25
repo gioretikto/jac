@@ -1,4 +1,4 @@
-/* jac v.1.4.0 - Giovanni Resta 23/09/2021 */
+/* jac v.1.6.0 - Giovanni Resta 23/09/2021 */
 
 #include "jac.h"
 
@@ -19,6 +19,8 @@ int main(int argc, char* argv[])
 	long double result;
 
 	struct control jac;
+
+	jac.par = 0;
 
 	if (argc == 1)
 		printf("Enter x to quit\n>>");

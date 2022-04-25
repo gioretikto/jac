@@ -59,7 +59,7 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 		 	add_item(&head, number);
  
 			if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{' || isalpha(*jac->buf))	/* For situations like 5(3+2) */
-				head->op = '*';			
+				head->op = '*';
 		}
 
 		else if (*jac->buf == '-' || *jac->buf == '+')			/* Important for situation like -(5+3) which jac translates into -1*(5+3) */
@@ -76,27 +76,30 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 		else if (*jac->buf == '(' || *jac->buf == '[' || *jac->buf == '{')
 		{
 			jac->buf++;
+			jac->par++;
 
-			if (inFunc != true)
-				add_item(&head, parse_evaluate_expr(jac, inFunc));
+			add_item(&head, parse_evaluate_expr(jac, inFunc));
+
+			if (inFunc == true)
+			{
+				number = calculate(&head);
+				free(head);
+				return number;
+			}
+
+			if (*jac->buf != '\0')										/* For situations like (3+2)5 */
+				if (isalpha(*jac->buf) || isdigit(*jac->buf))
+					head->op = '*';
 		}
 
 		else if (*jac->buf == ')' || *jac->buf == ']' || *jac->buf == '}')
 		{
 			jac->buf++;
+			jac->par--;
 
-			if (*jac->buf != '\0')										/* For situations like (3+2)5 */
-				if (isalpha(*jac->buf) || isdigit(*jac->buf))
-					head->op = '*';
-
-			if (head != NULL)
-				number = calculate(&head);
-
-			else
-				jac->buf[0] = ERROR;
-
-			if (inFunc == true)
+			if (head != NULL && jac->par == 0)
 			{
+				number = calculate(&head);
 				free(head);
 				return number;
 			}
@@ -115,10 +118,10 @@ long double parse_evaluate_expr(struct control *jac, bool inFunc)
 			/* Parse for constants */
 			if ((number = parseConstants(jac)) != 0)
 			{
-					add_item(&head, number);
+				add_item(&head, number);
 
-					if (*jac->buf == '(')		/* For situations like 5(3+2) */
-						head->op = '*';
+				if (*jac->buf == '(')		/* For situations like 5(3+2) */
+					head->op = '*';
 			}
 
 			if (*jac->buf == 'E')
@@ -413,7 +416,8 @@ enum functions searchFunction (struct control *jac)
 
 long double calculate (struct node **head)
 {
-	reverse(head);
+	
+		reverse(head);
 	
 	struct node *tmp = *head;
 

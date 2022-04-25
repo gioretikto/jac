@@ -20,4 +20,5 @@
 
 struct control{
 	char *buf;
+	unsigned int par;
 };
