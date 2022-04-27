@@ -32,6 +32,27 @@ long double mult_div_pow_mod(long double number)
 	return number;
 }
 
+long double my_cosine(long double number)
+{
+	long double diff = M_PIl/2 - fabsl(fmodl(M_PIl/2- fmodl(number, M_PIl/2), M_PIl/2));
+
+	if (diff < 0.00000000001)
+		return 0;
+	else
+		return cosl(number);
+}
+
+long double my_sine(long double number)
+{
+	long double mod_pi = fmod(number, M_PI);
+	long double diff = M_PIl/2 - fabsl(fmod(M_PI/2 - mod_pi, M_PI));
+
+	if (diff < 0.01)
+		return 0;
+	else
+		return sinl(number);
+}
+
 long double abort_parsing(struct node *head)
 {
 	if (head != NULL)
@@ -282,7 +303,7 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 
 	enum functions func2;
 
-	static my_func array[] = {cosl, sinl, asinhl, asinl, atanl, acosl, sqrtl, sinhl, coshl, tanhl, tanl, log10l, logl, mult_div_pow_mod};
+	static my_func array[] = {my_cosine, my_sine, asinhl, asinl, atanl, acosl, sqrtl, sinhl, coshl, tanhl, tanl, log10l, logl, mult_div_pow_mod};
 
 	if (1 == sscanf(jac->buf, "%Lf%n", &number, &n))
 	{
