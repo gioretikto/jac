@@ -44,8 +44,8 @@ long double my_cosine(long double number)
 
 long double my_sine(long double number)
 {
-	long double mod_pi = fmod(number, M_PI);
-	long double diff = M_PIl/2 - fabsl(fmod(M_PI/2 - mod_pi, M_PI));
+	long double mod_pi = fmodl(number, M_PI);
+	long double diff = M_PIl/2 - fabsl(fmodl(M_PI/2 - mod_pi, M_PI));
 
 	if (diff < 0.01)
 		return 0;
