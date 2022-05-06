@@ -34,23 +34,26 @@ long double mult_div_pow_mod(long double number)
 
 long double my_cosine(long double number)
 {
-	long double diff = M_PIl/2 - fabsl(fmodl(M_PIl/2- fmodl(number, M_PIl/2), M_PIl/2));
+	long double precision = 0.01;
 
-	if (diff < 0.00000000001)
+	long double mod_pi = fmodl(number, M_PI/2);
+
+	if (mod_pi <= precision)
 		return 0;
 	else
-		return cosl(number);
+		return (cosl(number));
 }
 
 long double my_sine(long double number)
 {
-	long double mod_pi = fmodl(number, M_PI);
-	long double diff = M_PIl/2 - fabsl(fmodl(M_PI/2 - mod_pi, M_PI));
+	long double precision = 0.01;
 
-	if (diff < 0.01)
+	long double mod_pi = fmodl(number, M_PI);
+
+	if (mod_pi <= precision)
 		return 0;
 	else
-		return sinl(number);
+		return (sinl(number));
 }
 
 long double abort_parsing(struct node *head)
