@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 	jac.par = 0;
 
 	if (argc == 1)
-		printf("Enter x to quit\n>>");
+		printf("Enter x to quit, b for special functions\n>>");
 
 	if (argc > 1)
 	{
@@ -110,32 +110,4 @@ int main(int argc, char* argv[])
 	}
 
 	return 0;
-}
-
-long long dec_bin(long long n);
-long long bin_dec(long long n);
-
-void special_functions()
-{
-	long long (*fp[2])(long long n);
-
-	fp[0] = dec_bin;
-	fp[1] = bin_dec;
-
-	unsigned int ans;
-
-	long long number;
-
-	printf("Enter 1 for decimal to binary conversion\n");
-	printf("Enter 2 for binary to decimal conversion\n");
-	printf("Enter 0 to quit\n>>");
-
-	scanf("%d", &ans);
-
-	if(ans != 0 && ans < 4)
-	{
-		printf(">");
-		scanf("%lld", &number);
-		printf("%lld\n", fp[ans-1](number));
-	}
 }
