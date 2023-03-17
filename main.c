@@ -1,4 +1,4 @@
-/* jac v.1.6.0 - Giovanni Resta 23/09/2021 */
+/* jac v.1.6.2 - Giovanni Resta 23/09/2021 */
 
 #include "jac.h"
 
@@ -9,6 +9,8 @@ void print_result(long double x);
 void remove_spaces(char *str);
 bool areParenthesisBalanced(char *exp);
 bool checkSyntax(char *buf);
+
+void special_functions();
 
 int main(int argc, char* argv[])
 {
@@ -67,6 +69,12 @@ int main(int argc, char* argv[])
 		if (fgets(line, MAX, stdin) == NULL || line[0] == 'x')
 			break;
 
+		if (line[0] == 'b')
+		{
+			special_functions();
+			continue;
+		}
+
 		if (line[0] == '\n')
 		{
 			printf(">>");
@@ -102,4 +110,32 @@ int main(int argc, char* argv[])
 	}
 
 	return 0;
+}
+
+long long dec_bin(long long n);
+long long bin_dec(long long n);
+
+void special_functions()
+{
+	long long (*fp[2])(long long n);
+
+	fp[0] = dec_bin;
+	fp[1] = bin_dec;
+
+	unsigned int ans;
+
+	long long number;
+
+	printf("Enter 1 for decimal to binary conversion\n");
+	printf("Enter 2 for binary to decimal conversion\n");
+	printf("Enter 0 to quit\n>>");
+
+	scanf("%d", &ans);
+
+	if(ans != 0 && ans < 4)
+	{
+		printf(">");
+		scanf("%lld", &number);
+		printf("%lld\n", fp[ans-1](number));
+	}
 }
