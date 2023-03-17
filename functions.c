@@ -9,9 +9,9 @@ unsigned long factorial(unsigned long f)
 	return(f * factorial(f - 1));
 }
 
-int quadr_eq()
+int quadr_eq()	/* Solve a quadratic equation */
 {
-	double  a, b, c, x1, x2, disc;
+	double  a, b, c, x1, disc;
     
 	printf("Please enter the value of a:\n");
 	printf(">");
@@ -35,25 +35,26 @@ int quadr_eq()
 	else
 	{
 		disc = (b*b) - 4*a*c;
+		int den = 2*a;
 
 		if (disc == 0)
 		{
-			x1 = -b / (2 * a);
-			printf("x1 = %lf, x2 = %lf", x1, x1);
+			x1 = -b / den;
+			printf("x1 = %lf\nx2 = %lf\n", x1, x1);
         }
 
         else if (disc > 0)
 		{
-			x1 = (-b + sqrt(disc)) / (2 * a);
-			x2 = (-b - sqrt(disc)) / (2 * a);
-			printf("x1 = %.1lf, x2 = %.1lf", x1, x2);
-        }
+			double sq = sqrt(disc);
+			x1 = (-b + sq) / den;
+			double x2 = (-b - sq) / den;
+			printf("x1 = %.1lf\nx2 = %.1lf\n", x1, x2);
+		}
 
 		else
 		{
-			double xr = - b / ( 2 * a );
+			double xr = - b / den;
 			int num = -(b*b - 4*a*c);
-			int den = 2*a;
 			printf("x1 = %lf + i sqrt(%d)/%d\nx2 = %lf -i sqrt(%d)/%d\n", xr, num,den, xr, num,den);
 		}
 	}
