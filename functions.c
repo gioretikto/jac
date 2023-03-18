@@ -1,6 +1,35 @@
 #include "jac.h"
 #include <math.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+unsigned long long binomial(unsigned long long n, 
+				   unsigned long long k) {
+	if(k > n) {
+		return 0;
+	}
+
+	/* symmetry */
+	if(k > n - k) {
+		k = n - k;
+	}
+	if(k > n / 2) {
+		k = n - k;
+	}
+
+	unsigned long long c = 1;
+	unsigned long long result = 1;
+
+	for(;c <= k; c++) {
+		result *= n--;
+		result /= c;
+	}
+
+	return result;
+}
+
 unsigned long factorial(unsigned long f)
 {
 	if (f == 0) 
@@ -35,7 +64,7 @@ int quadr_eq()	/* Solve a quadratic equation */
 	else
 	{
 		disc = (b*b) - 4*a*c;
-		int den = 2*a;
+		double den = 2*a;
 
 		if (disc == 0)
 		{
@@ -54,8 +83,8 @@ int quadr_eq()	/* Solve a quadratic equation */
 		else
 		{
 			double xr = - b / den;
-			int num = -(b*b - 4*a*c);
-			printf("x1 = %lf + i sqrt(%d)/%d\nx2 = %lf -i sqrt(%d)/%d\n", xr, num,den, xr, num,den);
+			double num = -(b*b - 4*a*c);
+			printf("x1 = %lf + i sqrt(%lf)/%lf\nx2 = %lf -i sqrt(%lf)/%lf\n", xr, num,den, xr, num,den);
 		}
 	}
 
@@ -94,7 +123,29 @@ long long dec_bin(long long n)
 	return bin;
 }
 
-void special_functions() /* Functions seldomly used */
+int input_number(unsigned long long *num) {
+	*num = 0;
+	char c;
+	while(1) {
+	c = getchar();
+	if (!isspace(c))
+		break;
+	}
+
+	while(1) {
+		if (c == '\n')
+			return 0;
+
+		if (!isdigit(c))
+			return -2;
+
+		*num *= 10;
+		*num += c - '0';
+		c = getchar();
+	}
+}
+
+int special_functions() /* Functions seldomly used */
 {
 	long long (*fp[2])(long long n);
 
@@ -108,14 +159,39 @@ void special_functions() /* Functions seldomly used */
 	printf("Enter 1 for decimal to binary conversion\n");
 	printf("Enter 2 for binary to decimal conversion\n");
 	printf("Enter 3 to solve ax^2+bx+c=0\n");
+	printf("Enter 4 to calculate the binomial coefficient C_{n,k}\n");
 	printf("Enter 0 to quit\n>>");
 
 	scanf("%d", &ans);
 
-	if(ans != 0 && ans < 4)
+	if(ans != 0 && ans < 5)
 	{
-		if(ans ==3)
+		if (ans == 3)
 			quadr_eq();
+
+		if (ans == 4)
+		{
+			unsigned long long n,k;
+
+			printf("input n:\n>");
+
+			int ret = input_number(&n);
+
+			if (ret < 0) {
+                printf("Error reading n\n");
+                return 1;
+			}
+
+			printf("input k:\n>");
+			ret = input_number(&k);
+
+			if (ret < 0) {
+				printf("Error reading k\n");
+				return 1;
+			}
+
+			printf("%lld\n>>", binomial(n,k));
+		}
 
 		else
 		{
@@ -124,6 +200,8 @@ void special_functions() /* Functions seldomly used */
 			printf("%lld\n", fp[ans-1](number));
 		}
 	}
+
+	return 0;
 }
 
 void print_result(long double x)
