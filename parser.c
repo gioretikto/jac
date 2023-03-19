@@ -312,13 +312,13 @@ long double evaluateFuncResult (struct control *jac, enum functions func)
 	{
 		jac->buf += n;
 
-		while(searchPowFunction(jac, &number))		/* For situations like 5^2^3^.. */
+		while(searchPowFunction(jac, &number))		/* For cases like 5^2^3^.. */
 			{;}
 
 		return (array[func](number));
 	}
 
-	else if (isalpha(*jac->buf)) 	/* Parse for functions and constants */
+	else if (isalpha(*jac->buf)) 	/* Parse functions and constants */
 	{
 		if ((func2 = searchFunction(jac)) != NONE)
 			return evaluateFuncResult(jac, func2);
@@ -419,18 +419,6 @@ enum functions searchFunction (struct control *jac)
 		jac->buf += 2;
 		func = LN;
 	}
-
-	/*else if (strncmp(jac->buf, "bin_dec", 7) == 0)
-	{
-		jac->buf += 7;
-		func = BIN_DEC;
-	}
-
-	else if (strncmp(jac->buf, "dec_bin", 7) == 0)
-	{
-		jac->buf += 7;
-		func = DEC_BIN;
-	}*/
 
 	else
 		return NONE;

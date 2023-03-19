@@ -6,18 +6,17 @@
 #include <string.h>
 
 unsigned long long binomial(unsigned long long n, 
-				   unsigned long long k) {
-	if(k > n) {
+				   unsigned long long k)
+{
+	if(k > n)
 		return 0;
-	}
 
 	/* symmetry */
-	if(k > n - k) {
+	if(k > n - k)
 		k = n - k;
-	}
-	if(k > n / 2) {
+
+	if(k > n / 2)
 		k = n - k;
-	}
 
 	unsigned long long c = 1;
 	unsigned long long result = 1;
@@ -94,7 +93,7 @@ int quadr_eq()	/* Solve a quadratic equation */
 long long bin_dec(long long n)
 {
 	int dec = 0, i = 0, rem;
-    
+
 	while (n != 0)
 	{
 		rem = n % 10;
@@ -102,6 +101,7 @@ long long bin_dec(long long n)
 		dec += rem * pow(2, i);
 		++i;
 	}
+
 	return dec;
 }
 
@@ -109,9 +109,9 @@ long long dec_bin(long long n)
 {
 	long long bin = 0;
 	int rem, i;
-    
+
 	rem = i = 1;
-    
+
 	while (n != 0)
 	{
 		rem = n % 2;
@@ -119,11 +119,12 @@ long long dec_bin(long long n)
 		bin += rem * i;
 		i *= 10;
 	}
-    
+
 	return bin;
 }
 
-int input_number(unsigned long long *num) {
+int input_number(unsigned long long *num)
+{
 	*num = 0;
 	char c;
 	while(1) {
